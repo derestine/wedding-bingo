@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Derrick &amp; Jolene · Hamper Lucky Draw</title>
+<title>Derrick &amp; Jolene</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -66,14 +66,6 @@
     box-shadow: 0 18px 44px rgba(140, 110, 50, 0.25);
     transition: opacity 0.5s ease;
     background: var(--ivory-2);
-  }
-  .event-title {
-    font-size: 15px; letter-spacing: 0.42em; text-transform: uppercase; font-weight: 500;
-    color: var(--ink); text-indent: 0.42em;
-  }
-  .event-sub {
-    margin-top: 8px; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--ink-soft); text-indent: 0.3em;
   }
 
   .progress { display: flex; gap: 34px; margin: 26px 0 4px; }
@@ -260,9 +252,6 @@
     50% { box-shadow: 0 4px 28px rgba(176,141,62,0.7); }
   }
 
-  footer { margin-top: 44px; text-align: center; }
-  footer .script { font-family: 'Pinyon Script', cursive; font-size: 26px; color: var(--ink-soft); }
-  footer .tiny { margin-top: 6px; font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink-soft); text-indent: 0.34em; }
 </style>
 </head>
 <body>
@@ -271,8 +260,6 @@
   <div class="names">Derrick <span class="amp">&amp;</span> Jolene</div>
   <img class="photo-arch" id="couplePhoto" src="couple-1.jpg" alt="Derrick and Jolene" />
   <div class="rule"><span>✦</span></div>
-  <div class="event-title">Hamper Lucky Draw</div>
-  <div class="event-sub">B&ensp;·&ensp;I&ensp;·&ensp;N&ensp;·&ensp;G&ensp;·&ensp;O&ensp;&ensp;1 – 75</div>
 </header>
 
 <div class="progress">
@@ -283,7 +270,7 @@
 <main>
   <section class="panel stage">
     <button class="sound-btn" id="soundBtn" title="Toggle tick sound">♪</button>
-    <div class="draw-label" id="drawLabel">Ready when you are</div>
+    <div class="draw-label" id="drawLabel">&nbsp;</div>
     <div class="ball-wrap">
       <div class="ball idle" id="ball">
         <div class="num" id="ballNum">?</div>
@@ -294,7 +281,7 @@
 
     <div class="override">
       <h3>Called offline?</h3>
-      <p>If a number was already drawn off-screen, enter it here and it will be marked as called — exactly as if the generator had picked it. It can never be drawn again.</p>
+      <p>Numbers drawn off-screen can be entered here. They are marked as called and cannot be drawn again.</p>
       <div class="override-row">
         <input id="overrideInput" type="number" min="1" max="75" placeholder="1 – 75" inputmode="numeric" />
         <button id="overrideBtn">Mark called</button>
@@ -316,11 +303,6 @@
     <div class="board" id="board"></div>
   </section>
 </main>
-
-<footer>
-  <div class="script">Good luck, with love</div>
-  <div class="tiny">Derrick &amp; Jolene</div>
-</footer>
 
 <script>
 (function () {
@@ -416,8 +398,8 @@
     if (state.current == null) {
       ball.classList.add('idle');
       ballNum.textContent = '?';
-      drawLabel.textContent = 'Ready when you are';
-      document.title = 'Derrick & Jolene · Hamper Lucky Draw';
+      drawLabel.textContent = '\u00a0';
+      document.title = 'Derrick & Jolene';
     } else {
       ball.classList.remove('idle');
       ballNum.textContent = state.current;
