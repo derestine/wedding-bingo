@@ -232,19 +232,27 @@
   .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
   .col { display: flex; flex-direction: column; gap: 7px; }
   .col-head {
-    text-align: center; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 24px;
-    color: var(--gold-deep); padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 4px;
+    width: 100%; aspect-ratio: 1.35;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 30px;
+    color: #fffdf8; margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--champagne), var(--gold-deep));
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(176,141,62,0.35), inset 0 2px 5px rgba(255,255,255,0.4);
+    text-shadow: 0 1px 2px rgba(120, 85, 20, 0.4);
   }
   .cell {
-    aspect-ratio: 1.4; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--ink-soft);
-    background: rgba(255,255,255,0.55); border: 1px solid rgba(176,141,62,0.16);
+    aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--ink-soft);
+    background: transparent; border: 1px dashed rgba(176,141,62,0.25);
     transition: all 0.25s ease;
   }
   .cell.called {
-    background: linear-gradient(135deg, var(--champagne), var(--gold) 65%, var(--gold-deep));
-    color: #fffdf8; font-weight: 700; border-color: transparent;
-    box-shadow: 0 4px 14px rgba(176,141,62,0.35);
+    background: radial-gradient(circle at 35% 30%, #e8cf95, var(--gold) 55%, var(--gold-deep));
+    color: #fffdf8; font-weight: 700; border-style: solid; border-color: transparent;
+    box-shadow: 0 4px 14px rgba(176,141,62,0.4), inset 0 -3px 8px rgba(120, 85, 20, 0.35), inset 0 3px 6px rgba(255,255,255,0.35);
+    text-shadow: 0 1px 2px rgba(120, 85, 20, 0.5);
+    transform: scale(1.06);
   }
   .cell.latest { animation: latestPulse 1.8s ease-in-out infinite; outline: 2px solid var(--gold-deep); outline-offset: 2px; }
   @keyframes latestPulse {
@@ -302,7 +310,7 @@
 
   <section class="panel">
     <div class="board-head">
-      <h3>Called board</h3>
+      <h3>Bingo Card</h3>
       <button class="btn btn-ghost" id="resetBtn">New game</button>
     </div>
     <div class="board" id="board"></div>
