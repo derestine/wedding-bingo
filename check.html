@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Check a win · Derrick &amp; Jolene</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ivory: #faf7ef;
+    --ink: #4a4137;
+    --ink-soft: #8a7d6b;
+    --gold: #b08d3e;
+    --gold-deep: #8f6f2a;
+    --champagne: #d9bd7f;
+    --sage: #8a9b7e;
+    --card: #fffdf8;
+    --line: rgba(176, 141, 62, 0.28);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
+  body {
+    font-family: 'Jost', system-ui, sans-serif;
+    background: var(--ivory);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .names {
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(44px, 11vw, 72px);
+    line-height: 1.05; text-align: center;
+  }
+  .names .amp { color: #c69a86; font-size: 0.72em; }
+  h2 { font-family: 'Pinyon Script', cursive; font-size: 34px; font-weight: 400; margin: 6px 0 2px; }
+  .sync {
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; margin: 10px 0 4px;
+    background: var(--card); text-align: center;
+  }
+  .sub { font-size: 13px; color: var(--ink-soft); margin: 8px 0 4px; text-align: center; max-width: 420px; }
+  .btn {
+    font-family: 'Jost', sans-serif; font-weight: 600; font-size: 15px; letter-spacing: 0.2em; text-indent: 0.2em; text-transform: uppercase;
+    color: #fffdf8; background: linear-gradient(135deg, var(--champagne), var(--gold-deep));
+    border: none; border-radius: 999px; padding: 15px 40px; cursor: pointer;
+    box-shadow: 0 10px 26px rgba(176,141,62,0.4);
+  }
+  .btn-ghost {
+    background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
+    border-radius: 999px; box-shadow: none; padding: 10px 24px; font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; font-family: 'Jost', sans-serif; font-weight: 500; cursor: pointer;
+  }
+  .row { display: flex; gap: 10px; margin: 14px 0 4px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .check-photo { width: 100%; max-width: 420px; border-radius: 10px; border: 1px solid var(--line); margin: 12px 0 4px; display: none; }
+  .check-photo.show { display: block; }
+  .ocr-status { font-size: 13px; color: var(--ink-soft); font-style: italic; min-height: 20px; margin: 2px 0 4px; text-align: center; }
+  .pick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; margin: 12px 0; width: 100%; max-width: 420px; }
+  .pick { aspect-ratio: 1; border-radius: 50%; border: 1px dashed rgba(138,155,126,0.45); background: var(--card); font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all 0.15s; }
+  .pick.on { background: linear-gradient(135deg, #e6c3ae, #c08d73); border: 1px solid #a1765f; color: #fffdf8; }
+  .pick.hit { background: linear-gradient(135deg, #a3b795, #75875f); border: 1px solid #5f7350; color: #fffdf8; }
+  .check-result { margin: 14px 0; padding: 16px 20px; border-radius: 12px; font-size: 16px; display: none; line-height: 1.55; width: 100%; max-width: 420px; text-align: center; }
+  .check-result.show { display: block; }
+  .check-result.ok { background: rgba(138,155,126,0.14); border: 1px solid var(--sage); color: #5c6b52; font-weight: 600; font-size: 19px; }
+  .check-result.no { background: rgba(176,141,62,0.10); border: 1px solid var(--line); color: var(--ink-soft); }
+  .err-box { margin-top: 40px; text-align: center; color: var(--ink-soft); font-size: 15px; line-height: 1.7; }
+</style>
+</head>
+<body>
+  <div class="names">Derrick <span class="amp">&amp;</span> Jolene</div>
+  <div id="app" style="display:none; width:100%; align-items:center; flex-direction:column;">
+    <h2>Check a win</h2>
+    <div class="sync" id="syncInfo"></div>
+    <p class="sub">Snap the paper card — numbers are read automatically. Tap to correct, then verify.</p>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" hidden />
+    <div class="row"><button class="btn-ghost" id="photoBtn">Snap card photo</button></div>
+    <img class="check-photo" id="photoImg" alt="Paper card photo" />
+    <div class="ocr-status" id="ocrStatus"></div>
+    <div class="pick-grid" id="pickGrid"></div>
+    <div class="row">
+      <button class="btn" id="verifyBtn">Verify</button>
+      <button class="btn-ghost" id="clearBtn">Clear</button>
+    </div>
+    <div class="check-result" id="result"></div>
+  </div>
+  <div class="err-box" id="errBox" style="display:none">
+    This link didn't carry any game data.<br/>Please scan the QR code from the laptop again.
+  </div>
+
+<script>
+(function () {
+  'use strict';
+  var LETTERS = ['B', 'I', 'N', 'G', 'O'];
+  function letterFor(n) { return LETTERS[Math.ceil(n / 15) - 1]; }
+
+  /* decode #g2.c<base64url bitmask> */
+  var calledSet = {}, gameNum = 1, ok = false;
+  try {
+    var m = (location.hash || '').match(/^#g(\d+)\.c([A-Za-z0-9\-_]+)$/);
+    if (m) {
+      gameNum = parseInt(m[1], 10);
+      var s = m[2].replace(/-/g, '+').replace(/_/g, '/');
+      while (s.length % 4) s += '=';
+      var bin = atob(s);
+      for (var n = 1; n <= 75; n++) {
+        var i = n - 1, b = i < bin.length ? bin.charCodeAt(i >> 3) : 0;
+        if (b & (1 << (i & 7))) calledSet[n] = true;
+      }
+      ok = true;
+    }
+  } catch (e) {}
+  if (!ok) {
+    document.getElementById('errBox').style.display = 'block';
+    return;
+  }
+  var app = document.getElementById('app');
+  app.style.display = 'flex';
+  var calledCount = Object.keys(calledSet).length;
+  document.getElementById('syncInfo').textContent =
+    'Game ' + gameNum + ' · ' + calledCount + ' numbers called';
+
+  var pickGrid = document.getElementById('pickGrid');
+  var result = document.getElementById('result');
+  var ocrStatus = document.getElementById('ocrStatus');
+  var photoInput = document.getElementById('photoInput');
+  var photoImg = document.getElementById('photoImg');
+  var picked = {}, detected = {};
+
+  function refreshPicks() {
+    var btns = pickGrid.children;
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i], n = parseInt(b.getAttribute('data-n'), 10);
+      var isHit = picked[n] && detected[n] && calledSet[n];
+      b.classList.toggle('hit', !!isHit);
+      b.classList.toggle('on', !!picked[n] && !isHit);
+    }
+  }
+  for (var c = 0; c < 5; c++) {
+    for (var r = 1; r <= 15; r++) {
+      (function (n) {
+        var b = document.createElement('button');
+        b.className = 'pick';
+        b.setAttribute('data-n', n);
+        b.textContent = n;
+        b.addEventListener('click', function () {
+          if (picked[n]) delete picked[n]; else picked[n] = true;
+          refreshPicks();
+          result.className = 'check-result';
+        });
+        pickGrid.appendChild(b);
+      })(c * 15 + r);
+    }
+  }
+
+  function loadTesseract() {
+    return new Promise(function (res, rej) {
+      if (window.Tesseract) { res(); return; }
+      var sc = document.createElement('script');
+      sc.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      sc.onload = res; sc.onerror = rej;
+      document.head.appendChild(sc);
+    });
+  }
+  document.getElementById('photoBtn').addEventListener('click', function () {
+    photoInput.click();
+  });
+  photoInput.addEventListener('change', function () {
+    var f = this.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      photoImg.src = rd.result;
+      photoImg.classList.add('show');
+      ocrStatus.textContent = 'Reading card…';
+      loadTesseract().then(function () {
+        return window.Tesseract.recognize(rd.result, 'eng');
+      }).then(function (r) {
+        var found = {};
+        ((r && r.data && r.data.text || '').match(/\d+/g) || []).forEach(function (x) {
+          var n = parseInt(x, 10);
+          if (n >= 1 && n <= 75) found[n] = true;
+        });
+        detected = found;
+        Object.keys(detected).forEach(function (k) { picked[k] = true; });
+        refreshPicks();
+        result.className = 'check-result';
+        var count = Object.keys(detected).length;
+        ocrStatus.textContent = count
+          ? 'Found ' + count + ' numbers — green already called, tap to correct.'
+          : 'Could not read numbers — tap them manually.';
+      }).catch(function () {
+        ocrStatus.textContent = 'Could not read the photo — tap the numbers manually.';
+      });
+    };
+    rd.readAsDataURL(f);
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    picked = {}; detected = {};
+    ocrStatus.textContent = '';
+    refreshPicks();
+    result.className = 'check-result';
+  });
+  document.getElementById('verifyBtn').addEventListener('click', function () {
+    var nums = Object.keys(picked).map(Number);
+    if (!nums.length) {
+      result.textContent = 'Tap the numbers on the paper card first.';
+      result.className = 'check-result show no';
+      return;
+    }
+    var missing = nums.filter(function (n) { return !calledSet[n]; })
+                       .sort(function (a, b) { return a - b; });
+    if (!missing.length) {
+      result.textContent = 'Verified — all ' + nums.length + ' numbers have been called. BINGO!';
+      result.className = 'check-result show ok';
+    } else {
+      result.textContent = 'Not yet — still missing: ' +
+        missing.map(function (n) { return letterFor(n) + ' ' + n; }).join(', ');
+      result.className = 'check-result show no';
+    }
+    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+})();
+</script>
+</body>
+</html>
