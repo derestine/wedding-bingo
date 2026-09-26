@@ -318,17 +318,20 @@
     .settings-panel { right: 12px; left: 12px; width: auto; }
   }
 
-  /* ---------- laptop kiosk: everything fits one screen, no scroll ---------- */
+    /* ---------- laptop kiosk: everything fits one screen, no scroll ---------- */
   @media (min-width: 921px) {
-    :root { --ball: min(196px, 25vh); }
+    :root { --ball: min(196px, 25vh); --bsize: max(28px, calc((100vh - 330px) / 16)); }
     body { height: 100vh; height: 100dvh; overflow: hidden; padding: 10px 22px 12px; }
     .names { font-size: clamp(36px, 6vh, 58px); }
     .rule { margin: 6px auto 4px; }
     .progress { margin: 8px 0 2px; gap: 28px; }
     .progress b { font-size: 26px; }
-    main { flex: 1; min-height: 0; margin-top: 8px; grid-template-columns: 330px minmax(0, 1fr); gap: 18px; max-width: 1720px; }
+    main { flex: 1; min-height: 0; margin-top: 8px; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 1720px; }
     .panel { min-height: 0; padding: 16px 18px; display: flex; flex-direction: column; overflow: hidden; }
-    .stage { overflow-y: auto; }
+    /* left: drawer + ball */
+    .stage { overflow-y: auto; align-items: center; }
+    .stage .draw-label, .stage .ball-wrap, .stage #drawBtn, .stage .hint,
+    .stage #undoBtn, .stage .override { width: 100%; max-width: 400px; }
     .draw-label { font-size: 17px; min-height: 24px; }
     .ball-wrap { min-height: 0; margin: 2px 0 6px; }
     #drawBtn { padding: 13px 34px; font-size: 14px; }
@@ -339,74 +342,24 @@
     .override p { display: none; }
     .override-row input { padding: 9px; font-size: 17px; }
     .flash { min-height: 0; margin-top: 6px; }
-    .recent { margin-top: 14px; flex: 1; min-height: 60px; display: flex; flex-direction: column; overflow: hidden; }
+    .recent { margin-top: 14px; flex: 1; min-height: 60px; width: 100%; display: flex; flex-direction: column; overflow: hidden; }
     .recent h3 { font-size: 24px; margin-bottom: 8px; }
     .chips { flex: 1; min-height: 0; overflow-y: auto; align-content: flex-start; }
-    .board-head { margin-bottom: 8px; }
+    /* right: board, circles sized to fit the height */
+    .board-head { margin-bottom: 8px; flex: none; }
     .board-head h3 { font-size: 26px; }
-    .board { flex: 1; min-height: 0; gap: 6px; }
-    .col { display: grid; grid-template-rows: repeat(16, minmax(0, 1fr)); gap: 3px; height: 100%; }
-    .col-head { width: auto; height: 90%; aspect-ratio: 1; justify-self: center; align-self: center; margin-bottom: 0; font-size: clamp(13px, 2.6vh, 22px); }
-    .cell { width: auto; height: 94%; aspect-ratio: 1; justify-self: center; align-self: center; font-size: clamp(10px, 2vh, 15px); }
+    .board { flex: 1; min-height: 0; gap: 6px; align-content: start; }
+    .col { align-items: center; gap: 4px; }
+    .col-head {
+      width: var(--bsize); height: var(--bsize); aspect-ratio: auto;
+      margin-bottom: 0; font-size: calc(var(--bsize) * 0.62);
+    }
+    .cell {
+      width: var(--bsize); height: var(--bsize); aspect-ratio: auto;
+      font-size: calc(var(--bsize) * 0.42);
+    }
+    .cell.called { transform: none; }
   }
-  .newest {
-    font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--ink-soft); vertical-align: middle; margin-left: 10px;
-  }
-  .empty-note { color: var(--ink-soft); font-size: 14px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
-
-  /* ---------- board ---------- */
-  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
-  .board-head h3 { font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400; }
-  .btn-ghost {
-    background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
-    box-shadow: none; padding: 10px 26px; font-size: 12px; letter-spacing: 0.2em;
-  }
-  .btn-ghost:hover:not(:disabled) { color: var(--gold-deep); border-color: var(--gold); box-shadow: none; transform: none; }
-  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-  .col { display: flex; flex-direction: column; gap: 7px; }
-  .col-head {
-    width: 100%; aspect-ratio: 1;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 30px; line-height: 1;
-    color: var(--gold-deep); margin-bottom: 6px;
-    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f8f3e7 100%);
-    border: 2px solid var(--champagne);
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(176,141,62,0.22), inset 0 2px 5px rgba(255,255,255,0.7);
-  }
-  .col-head.h0, .col-head.h3 {
-    border-color: #d8b3a0; color: #b98973;
-    box-shadow: 0 4px 12px rgba(189,143,118,0.22), inset 0 2px 5px rgba(255,255,255,0.7);
-  }
-  .col-head.h1, .col-head.h4 {
-    border-color: #a9b89a; color: #7d8f6f;
-    box-shadow: 0 4px 12px rgba(125,143,111,0.22), inset 0 2px 5px rgba(255,255,255,0.7);
-  }
-  .cell {
-    aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    text-align: center; line-height: 1; font-variant-numeric: tabular-nums;
-    font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600; color: var(--ink-soft);
-    background: transparent; border: 1px dashed rgba(138,155,126,0.45);
-    transition: all 0.25s ease;
-  }
-  .cell.called {
-    background: radial-gradient(circle at 35% 28%, #fffefb 0%, #f8f3e6 45%, #ece7d3 80%, #d9d2b8 100%);
-    color: var(--ink); font-weight: 700; border: 2px solid var(--sage);
-    box-shadow: 0 3px 10px rgba(125,143,111,0.35), inset 0 -4px 8px rgba(125,143,111,0.15), inset 0 3px 6px rgba(255,255,255,0.6);
-    transform: scale(1.08);
-  }
-  .cell.latest {
-    background: linear-gradient(135deg, #d9bd7f 0%, #b08d3e 100%);
-    border: 1px solid var(--gold-deep);
-    color: #fffdf8; font-weight: 700;
-    animation: latestPulse 1.8s ease-in-out infinite;
-  }
-  @keyframes latestPulse {
-    0%, 100% { box-shadow: 0 4px 14px rgba(176,141,62,0.4), 0 0 0 0 rgba(217,189,127,0.6); }
-    50% { box-shadow: 0 4px 22px rgba(176,141,62,0.65), 0 0 0 10px rgba(217,189,127,0); }
-  }
-
 </style>
 </head>
 <body>
