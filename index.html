@@ -121,14 +121,14 @@
   .ball .num {
     font-family: 'Cormorant Garamond', serif; font-weight: 700;
     font-size: 118px; line-height: 0.8;
-    transform: translateY(0.055em); /* optical centering for the serif figures */
+    transform: translateY(-0.24em); /* measured: Cormorant figures sit low in the line box */
     font-variant-numeric: tabular-nums;
   }
   .ball.idle { border-style: dashed; box-shadow: none; }
   .ball.idle .num { font-size: 72px; color: var(--ink-soft); font-style: italic; }
   .ball.rolling { animation: wobble 0.32s ease-in-out infinite; }
   @keyframes wobble { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.03); } }
-  .ball.rolling .num.fast { filter: blur(2px); transform: translateY(0.055em) scale(0.94); }
+  .ball.rolling .num.fast { filter: blur(2px); transform: translateY(-0.24em) scale(0.94); }
   .ball .num { transition: filter 0.2s, transform 0.2s; }
   .ball.land { animation: pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1); }
   @keyframes pop { 0% { transform: scale(0.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
