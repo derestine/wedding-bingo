@@ -23,6 +23,7 @@
     --line: rgba(176, 141, 62, 0.28);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
   body {
     font-family: 'Jost', system-ui, sans-serif;
     background:
@@ -296,6 +297,22 @@
   .check-result.no { background: rgba(198,154,134,0.14); border: 1px solid #c69a86; color: #8a5f4c; }
   .modal .row { display: flex; gap: 10px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
   .modal .row .btn-small { margin-top: 0; }
+  .pick.hit { background: linear-gradient(135deg, #a3b795, #75875f); border: 1px solid #5f7350; color: #fffdf8; }
+  .ocr-status { font-size: 13px; color: var(--ink-soft); font-style: italic; min-height: 20px; margin: 2px 0 4px; }
+  @media (max-width: 520px) {
+    body { padding: 24px 12px 48px; }
+    .panel { padding: 24px 16px; }
+    .ball { width: 216px; height: 216px; }
+    .ball .num { font-size: 96px; }
+    .ball.idle .num { font-size: 58px; }
+    .ball-wrap { min-height: 248px; }
+    .ball-wrap.glow::before { width: 246px; height: 246px; margin: -123px 0 0 -123px; }
+    .ball-wrap.glow::after { width: 230px; height: 230px; margin: -115px 0 0 -115px; }
+    .modal { padding: 22px 18px; }
+    .modal-overlay { padding: 12px; }
+    .pick { font-size: 13px; }
+    .settings-panel { right: 12px; left: 12px; width: auto; }
+  }
   .newest {
     font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
     color: var(--ink-soft); vertical-align: middle; margin-left: 10px;
@@ -303,7 +320,7 @@
   .empty-note { color: var(--ink-soft); font-size: 14px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
   /* ---------- board ---------- */
-  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
   .board-head h3 { font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400; }
   .btn-ghost {
     background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
@@ -433,10 +450,11 @@
   <div class="modal">
     <button class="modal-close" id="checkClose" title="Close">&times;</button>
     <h3>Check a win</h3>
-    <p class="sub">Snap the paper card, tap its numbers below, then verify.</p>
+    <p class="sub">Snap the paper card — numbers are read automatically. Tap to correct, then verify.</p>
     <input type="file" id="checkPhotoInput" accept="image/*" capture="environment" hidden />
     <button class="btn-ghost btn-small" id="checkPhotoBtn" style="margin-top:0">Snap card photo</button>
     <img class="check-photo" id="checkPhotoImg" alt="Paper card photo" />
+    <div class="ocr-status" id="ocrStatus"></div>
     <div class="pick-grid" id="pickGrid"></div>
     <div class="row">
       <button class="btn" id="verifyBtn">Verify</button>
@@ -769,16 +787,28 @@
   var checkPhotoImg = document.getElementById('checkPhotoImg');
   var checkResult = document.getElementById('checkResult');
   var picked = {};
+  var detected = {};
+  function refreshPicks() {
+    var btns = pickGrid.children;
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i], n = parseInt(b.getAttribute('data-n'), 10);
+      var isHit = picked[n] && detected[n] && state.called.indexOf(n) !== -1;
+      b.classList.toggle('hit', isHit);
+      b.classList.toggle('on', !!picked[n] && !isHit);
+    }
+  }
   (function buildPickGrid() {
     for (var c = 0; c < 5; c++) {
       for (var r = 1; r <= 15; r++) {
         (function (n) {
           var b = document.createElement('button');
           b.className = 'pick';
+          b.setAttribute('data-n', n);
           b.textContent = n;
           b.addEventListener('click', function () {
-            if (picked[n]) { delete picked[n]; b.classList.remove('on'); }
-            else { picked[n] = true; b.classList.add('on'); }
+            if (picked[n]) delete picked[n];
+            else picked[n] = true;
+            refreshPicks();
             checkResult.className = 'check-result';
           });
           pickGrid.appendChild(b);
@@ -800,6 +830,17 @@
   document.getElementById('checkPhotoBtn').addEventListener('click', function () {
     checkPhotoInput.click();
   });
+  var ocrStatus = document.getElementById('ocrStatus');
+  function loadTesseract() {
+    return new Promise(function (res, rej) {
+      if (window.Tesseract) { res(); return; }
+      var sc = document.createElement('script');
+      sc.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+      sc.onload = res;
+      sc.onerror = rej;
+      document.head.appendChild(sc);
+    });
+  }
   checkPhotoInput.addEventListener('change', function () {
     var f = this.files[0];
     if (!f) return;
@@ -807,13 +848,34 @@
     rd.onload = function () {
       checkPhotoImg.src = rd.result;
       checkPhotoImg.classList.add('show');
+      ocrStatus.textContent = 'Reading card…';
+      loadTesseract().then(function () {
+        return window.Tesseract.recognize(rd.result, 'eng');
+      }).then(function (r) {
+        var found = {};
+        ((r && r.data && r.data.text || '').match(/\d+/g) || []).forEach(function (m) {
+          var n = parseInt(m, 10);
+          if (n >= 1 && n <= 75) found[n] = true;
+        });
+        detected = found;
+        Object.keys(detected).forEach(function (k) { picked[k] = true; });
+        refreshPicks();
+        checkResult.className = 'check-result';
+        var count = Object.keys(detected).length;
+        ocrStatus.textContent = count
+          ? 'Found ' + count + ' numbers — green already called, tap to correct.'
+          : 'Could not read numbers — tap them manually.';
+      }).catch(function () {
+        ocrStatus.textContent = 'Could not read the photo — tap the numbers manually.';
+      });
     };
     rd.readAsDataURL(f);
   });
   document.getElementById('clearPicks').addEventListener('click', function () {
     picked = {};
-    var btns = pickGrid.children;
-    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+    detected = {};
+    ocrStatus.textContent = '';
+    refreshPicks();
     checkResult.className = 'check-result';
   });
   document.getElementById('verifyBtn').addEventListener('click', function () {
