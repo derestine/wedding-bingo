@@ -297,6 +297,11 @@
   .check-result.no { background: rgba(176,141,62,0.10); border: 1px solid var(--line); color: var(--ink-soft); }
   .modal .row { display: flex; gap: 10px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
   .modal .row .btn-small { margin-top: 0; }
+  .pair-box { display: none; text-align: center; margin-top: 16px; padding-top: 18px; border-top: 1px solid rgba(176,141,62,0.15); }
+  .pair-box.show { display: block; }
+  #qrBox { display: inline-block; padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; }
+  #qrBox img, #qrBox canvas { display: block; }
+  .pair-box p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
   .pick.hit { background: linear-gradient(135deg, #a3b795, #75875f); border: 1px solid #5f7350; color: #fffdf8; }
   .ocr-status { font-size: 13px; color: var(--ink-soft); font-style: italic; min-height: 20px; margin: 2px 0 4px; }
   @media (max-width: 520px) {
@@ -459,6 +464,11 @@
     <div class="row">
       <button class="btn" id="verifyBtn">Verify</button>
       <button class="btn-ghost btn-small" id="clearPicks">Clear</button>
+      <button class="btn-ghost btn-small" id="pairBtn">Pair phone</button>
+    </div>
+    <div class="pair-box" id="pairBox">
+      <div id="qrBox"></div>
+      <p>Scan with your phone to check on the go.<br/>Synced with <b id="pairCount"></b> numbers called — re-scan if more are drawn.</p>
     </div>
     <div class="check-result" id="checkResult"></div>
   </div>
@@ -896,6 +906,40 @@
         missing.map(function (n) { return letterFor(n) + ' ' + n; }).join(', ');
       checkResult.className = 'check-result show no';
     }
+  });
+
+  /* phone pairing: QR carries the called set to check.html */
+  function encodeCalled(called) {
+    var bytes = [];
+    for (var i = 0; i < 10; i++) bytes.push(0);
+    called.forEach(function (n) { var j = n - 1; bytes[j >> 3] |= (1 << (j & 7)); });
+    var bin = bytes.map(function (b) { return String.fromCharCode(b); }).join('');
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function loadQRCode() {
+    return new Promise(function (res, rej) {
+      if (window.QRCode) { res(); return; }
+      var sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+      sc.onload = res;
+      sc.onerror = rej;
+      document.head.appendChild(sc);
+    });
+  }
+  document.getElementById('pairBtn').addEventListener('click', function () {
+    var box = document.getElementById('pairBox');
+    box.classList.add('show');
+    document.getElementById('pairCount').textContent = state.called.length;
+    var base = location.origin + location.pathname.replace(/[^/]*$/, '');
+    var url = base + 'check.html#g' + (state.game || 1) + '.c' + encodeCalled(state.called);
+    var qrBox = document.getElementById('qrBox');
+    qrBox.innerHTML = '';
+    loadQRCode().then(function () {
+      new QRCode(qrBox, { text: url, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.M });
+    }).catch(function () {
+      qrBox.innerHTML = '<p style="font-size:13px">Could not load QR.<br/>Open on your phone:<br/>' + url + '</p>';
+    });
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 
   render();
