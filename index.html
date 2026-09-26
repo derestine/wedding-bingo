@@ -379,8 +379,8 @@
 
     /* ---------- laptop kiosk: everything fits one screen, no scroll ---------- */
   @media (min-width: 921px) {
-    :root { --ball: min(190px, 24vh); --bsize: max(30px, calc((100vh - 245px) / 16)); }
-    body { height: 100vh; height: 100dvh; overflow: hidden; padding: 16px 30px 14px; }
+    :root { --ball: min(190px, 24vh); --bsize: max(28px, calc((100vh - 275px) / 16)); }
+    body { height: 100vh; height: 100dvh; overflow: hidden; padding: 20px 44px 18px; }
     .names { font-size: clamp(30px, 4.2vh, 44px); }
     .rule { display: none; }
     .progress { margin: 4px 0 0; gap: 22px; }
@@ -409,8 +409,8 @@
     .board-head { margin-bottom: 10px; flex: none; }
     .board-head h3 { font-size: 24px; }
     .btn-ghost { padding: 8px 20px; font-size: 11px; }
-    .board { flex: 1; min-height: 0; gap: 6px; align-content: start; }
-    .col { align-items: center; gap: 3px; }
+    .board { flex: 1; min-height: 0; gap: 6px; align-content: start; container-type: size; --bsize: max(28px, calc((100cqh - 52px) / 16)); }
+    .col { align-items: center; gap: 3px; min-height: 0; }
     .col-head {
       width: var(--bsize); height: var(--bsize); aspect-ratio: auto;
       margin-bottom: 2px; font-size: calc(var(--bsize) * 0.62);
