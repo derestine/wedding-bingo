@@ -59,6 +59,9 @@
   .rule { display: flex; align-items: center; gap: 14px; margin: 14px auto 12px; max-width: 420px; }
   .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
   .rule span { color: var(--gold); font-size: 13px; }
+  .topbar { width: 100%; max-width: 1180px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .top-actions .game-tag { margin-left: 0; }
   /* couple photos as a faded full-page backdrop */
   .couple-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
   .couple-bg img {
@@ -69,13 +72,15 @@
   }
   .couple-bg img.show { opacity: 0.22; }
 
-  .progress { display: flex; gap: 34px; margin: 26px 0 4px; }
-  .progress div { text-align: center; }
-  .progress b {
-    font-family: 'Jost', sans-serif; font-weight: 600;
-    font-size: 34px; color: var(--ink); display: block; line-height: 1;
-  }
-  .progress span { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-soft); }
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+  .stage-ball { text-align: center; }
+  .stage-controls { display: flex; flex-direction: column; align-items: stretch; gap: 8px; width: 100%; max-width: 400px; }
+  .ctl-row { display: flex; gap: 8px; }
+  .ctl-row .btn-ghost { flex: 1; white-space: nowrap; }
+  .stage-counts { display: flex; gap: 34px; margin: 14px 0 4px; }
+  .stage-counts div { text-align: center; }
+  .stage-counts b { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 34px; color: var(--ink); display: block; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stage-counts span { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-soft); }
 
   main {
     width: 100%; max-width: 1180px;
@@ -219,7 +224,8 @@
   }
 
   /* ---------- override ---------- */
-  .override { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 22px; text-align: left; }
+  .override { display: none; margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; text-align: left; width: 100%; }
+  .override.open { display: block; }
   .override h3 {
     font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400;
     color: var(--ink); margin-bottom: 4px;
@@ -243,8 +249,8 @@
   .flash.err { color: #8f5f43; }
   .flash.ok { color: #6d7f5f; }
 
-  .recent { margin-top: 22px; text-align: left; }
-  .recent h3 { font-family: 'Pinyon Script', cursive; font-size: 28px; font-weight: 400; margin-bottom: 10px; }
+  .stage-recent { margin-top: 18px; text-align: left; width: 100%; }
+  .stage-recent h3 { font-family: 'Pinyon Script', cursive; font-size: 28px; font-weight: 400; margin-bottom: 10px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 42px; }
   .chip {
     display: inline-flex; align-items: center; gap: 8px;
@@ -279,7 +285,6 @@
   .btn-ghost:disabled { opacity: 0.35; cursor: default; }
   .set-row .btn-small { margin-top: 0; }
   .game-tag { font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; margin-left: 12px; vertical-align: middle; white-space: nowrap; }
-  .board-head .actions { display: flex; gap: 10px; }
   /* win checker modal */
   .modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(74,65,55,0.45); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
@@ -325,8 +330,6 @@
   .empty-note { color: var(--ink-soft); font-size: 14px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
   /* ---------- board ---------- */
-  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
-  .board-head h3 { font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400; }
   .btn-ghost {
     background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
     box-shadow: none; padding: 10px 26px; font-size: 12px; letter-spacing: 0.2em;
@@ -358,42 +361,42 @@
   }
 
 
-    /* ---------- laptop kiosk: everything fits one screen, no scroll ---------- */
+    /* ---------- kiosk: stage band + full-width board, one screen ---------- */
   @media (min-width: 921px) {
-    :root { --ball: min(190px, 24vh); --bsize: max(28px, calc((100vh - 275px) / 16)); }
-    body { height: 100vh; height: 100dvh; overflow: hidden; padding: 20px 44px 18px; }
-    .names { font-size: clamp(30px, 4.2vh, 44px); }
-    .rule { display: none; }
-    .progress { margin: 4px 0 0; gap: 22px; }
-    .progress b { font-size: 19px; }
-    .progress span { font-size: 8px; }
-    main { flex: 1; min-height: 0; margin-top: 8px; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 1720px; align-items: stretch; }
-    .panel { min-height: 0; padding: 24px 26px; display: flex; flex-direction: column; overflow: hidden; }
-    /* left: drawer + ball */
-    .stage { overflow-y: auto; align-items: center; }
-    .stage .draw-label, .stage .ball-wrap, .stage #drawBtn, .stage .hint,
-    .stage #undoBtn, .stage .override { width: 100%; max-width: 400px; }
-    .draw-label { font-size: 17px; min-height: 24px; }
-    .ball-wrap { min-height: 0; margin: 2px 0 6px; }
-    #drawBtn { padding: 13px 34px; font-size: 14px; }
-    .hint { margin-top: 8px; }
-    #undoBtn { margin-top: 8px; }
-    .override { margin-top: 14px; padding-top: 14px; }
-    .override h3 { font-size: 24px; }
-    .override p { display: none; }
-    .override-row input { padding: 9px; font-size: 17px; }
+    :root { --ball: min(200px, 25vh); }
+    body { height: 100vh; height: 100dvh; overflow: hidden; padding: 18px 44px 16px; align-items: stretch; }
+    .topbar { flex: none; max-width: none; margin-bottom: 12px; flex-wrap: nowrap; }
+    .names { font-size: clamp(28px, 3.8vh, 40px); text-align: left; }
+    .top-actions { flex-wrap: nowrap; }
+    .panel { min-height: 0; padding: 20px 30px; overflow: hidden; }
+    /* stage band: ball | controls | counts | recent */
+    .stage { flex: none; flex-direction: row; align-items: center; gap: clamp(24px, 3.5vw, 54px); margin-bottom: 14px; }
+    .stage-ball { flex: none; }
+    .draw-label { font-size: 15px; min-height: 22px; margin-bottom: 2px; }
+    .ball-wrap { min-height: 0; margin: 0; }
+    .stage-controls { flex: none; min-width: 230px; }
+    #drawBtn { padding: 16px 40px; font-size: 16px; }
+    .hint { margin-top: 0; text-align: center; }
     .flash { min-height: 0; margin-top: 6px; }
-    .recent { margin-top: 14px; flex: 1; min-height: 60px; width: 100%; display: flex; flex-direction: column; overflow: hidden; }
-    .recent h3 { font-size: 24px; margin-bottom: 8px; }
-    .chips { flex: 1; min-height: 0; overflow-y: auto; align-content: flex-start; }
-    /* right: board, circles sized to fit the height */
-    .board-head { margin-bottom: 10px; flex: none; }
-    .board-head h3 { font-size: 24px; }
-    .btn-ghost { padding: 8px 20px; font-size: 11px; }
-    .board { flex: 1; min-height: 0; gap: 4px; align-content: start; container-type: size; --bsize: max(28px, calc((100cqh - 56px) / 15)); }
+    .stage-counts { flex: none; gap: 26px; margin: 0; }
+    .stage-counts b { font-size: clamp(34px, 5.5vh, 52px); }
+    .stage-counts span { font-size: 9px; }
+    .stage-recent { flex: 1; min-width: 0; margin-top: 0; align-self: stretch; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .stage-recent h3 { font-size: 22px; margin-bottom: 8px; }
+    .stage-recent .chips { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 4px; }
+    .chip { flex: none; }
+    /* board: 15 x 5, big clear balls sized to the panel */
+    .board-panel { flex: 1; min-height: 0; display: flex; padding: 22px 30px; }
+    .btn-ghost { padding: 8px 18px; font-size: 11px; }
+    .board {
+      flex: 1; min-height: 0; min-width: 0;
+      display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(5, 1fr); gap: 8px;
+      container-type: size;
+      --bsize: max(30px, min(calc((100cqh - 32px) / 5), calc((100cqi - 112px) / 15)));
+    }
     .cell {
-      width: var(--bsize); height: var(--bsize); aspect-ratio: auto;
-      font-family: 'Jost', sans-serif; font-weight: 600; font-size: calc(var(--bsize) * 0.44);
+      width: var(--bsize); height: var(--bsize); aspect-ratio: auto; place-self: center;
+      font-family: 'Jost', sans-serif; font-weight: 600; font-size: calc(var(--bsize) * 0.40);
     }
     .cell.called { transform: none; }
   }
@@ -422,55 +425,52 @@
   <img id="coupleB" src="couple-2.jpg" alt="" />
 </div>
 
-<header>
+<header class="topbar">
   <div class="names">Derrick <span class="amp">&amp;</span> Jolene</div>
-  <div class="rule"><span>✦</span></div>
+  <div class="top-actions">
+    <span class="game-tag" id="gameTag">Game 1</span>
+    <button class="btn-ghost btn-small" id="checkBtn">Check win</button>
+    <button class="btn-ghost btn-small" id="resetBtn">New game</button>
+  </div>
 </header>
 
-<div class="progress">
-  <div><b id="calledCount">0</b><span>Called</span></div>
-  <div><b id="leftCount">75</b><span>Remaining</span></div>
-</div>
-
-<main>
-  <section class="panel stage">
+<section class="panel stage">
+  <div class="stage-ball">
     <div class="draw-label" id="drawLabel">&nbsp;</div>
     <div class="ball-wrap">
       <div class="ball idle" id="ball">
         <div class="num" id="ballNum">?</div>
       </div>
     </div>
+  </div>
+  <div class="stage-controls">
     <button class="btn" id="drawBtn">Draw Number</button>
     <div class="hint">or press <kbd>Space</kbd></div>
-    <button class="btn-ghost btn-small" id="undoBtn" title="Shortcut: U" disabled>Undo last draw</button>
-
-    <div class="override">
-      <h3>Called offline?</h3>
-      <p>Numbers drawn off-screen can be entered here. They are marked as called and cannot be drawn again.</p>
+    <div class="ctl-row">
+      <button class="btn-ghost btn-small" id="undoBtn" title="Shortcut: U" disabled>Undo</button>
+      <button class="btn-ghost btn-small" id="offlineToggle">Called offline?</button>
+    </div>
+    <div class="override" id="overrideBox">
       <div class="override-row">
         <input id="overrideInput" type="number" min="1" max="75" placeholder="1 – 75" inputmode="numeric" />
         <button id="overrideBtn">Mark called</button>
       </div>
       <div class="flash" id="flash"></div>
     </div>
+  </div>
+  <div class="stage-counts">
+    <div><b id="calledCount">0</b><span>Called</span></div>
+    <div><b id="leftCount">75</b><span>Remaining</span></div>
+  </div>
+  <div class="stage-recent">
+    <h3>Recent calls <span class="newest">newest first</span></h3>
+    <div class="chips" id="chips"><span class="empty-note">Nothing called yet.</span></div>
+  </div>
+</section>
 
-    <div class="recent">
-      <h3>Recent calls <span class="newest">newest first</span></h3>
-      <div class="chips" id="chips"><span class="empty-note">Nothing called yet.</span></div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="board-head">
-      <div><h3 style="display:inline">Bingo Card</h3><span class="game-tag" id="gameTag">Game 1</span></div>
-      <div class="actions">
-        <button class="btn btn-ghost" id="checkBtn">Check win</button>
-        <button class="btn btn-ghost" id="resetBtn">New game</button>
-      </div>
-    </div>
-    <div class="board" id="board"></div>
-  </section>
-</main>
+<section class="panel board-panel">
+  <div class="board" id="board"></div>
+</section>
 
 <div class="modal-overlay" id="checkModal">
   <div class="modal">
@@ -522,6 +522,9 @@
   var flash = document.getElementById('flash');
   var resetBtn = document.getElementById('resetBtn');
   var undoBtn = document.getElementById('undoBtn');
+  var offlineToggle = document.getElementById('offlineToggle');
+  var overrideBox = document.getElementById('overrideBox');
+  offlineToggle.addEventListener('click', function () { overrideBox.classList.toggle('open'); });
   var gameTag = document.getElementById('gameTag');
   var checkBtn = document.getElementById('checkBtn');
   var fsBtn = document.getElementById('fsBtn');
