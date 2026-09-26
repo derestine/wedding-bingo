@@ -43,7 +43,7 @@
   }
   body::after {
     content: ""; position: fixed; inset: 0; z-index: -1;
-    background: linear-gradient(rgba(248, 244, 234, 0.88), rgba(243, 236, 222, 0.95));
+    background: linear-gradient(rgba(248, 244, 234, 0.84), rgba(243, 236, 222, 0.92));
   }
 
   /* ---------- header ---------- */
@@ -57,16 +57,15 @@
   .rule { display: flex; align-items: center; gap: 14px; margin: 14px auto 12px; max-width: 420px; }
   .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
   .rule span { color: var(--gold); font-size: 13px; }
-  .photo-arch {
-    width: 190px; height: 258px; margin: 18px auto 4px;
-    border-radius: 999px 999px 10px 10px;
-    object-fit: cover; object-position: center 22%;
-    border: 2px solid var(--gold);
-    outline: 1px solid rgba(176,141,62,0.45); outline-offset: 6px;
-    box-shadow: 0 18px 44px rgba(140, 110, 50, 0.25);
-    transition: opacity 0.5s ease;
-    background: var(--ivory-2);
+  /* couple photos as a faded full-page backdrop */
+  .couple-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .couple-bg img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 18%;
+    opacity: 0; transition: opacity 1.4s ease;
+    filter: saturate(0.85);
   }
+  .couple-bg img.show { opacity: 0.22; }
 
   .progress { display: flex; gap: 34px; margin: 26px 0 4px; }
   .progress div { text-align: center; }
@@ -121,13 +120,15 @@
   }
   .ball .num {
     font-family: 'Cormorant Garamond', serif; font-weight: 700;
-    font-size: 118px; line-height: 1;
+    font-size: 118px; line-height: 0.8;
+    transform: translateY(0.055em); /* optical centering for the serif figures */
+    font-variant-numeric: tabular-nums;
   }
   .ball.idle { border-style: dashed; box-shadow: none; }
   .ball.idle .num { font-size: 72px; color: var(--ink-soft); font-style: italic; }
   .ball.rolling { animation: wobble 0.32s ease-in-out infinite; }
   @keyframes wobble { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.03); } }
-  .ball.rolling .num.fast { filter: blur(2px); transform: scale(0.94); }
+  .ball.rolling .num.fast { filter: blur(2px); transform: translateY(0.055em) scale(0.94); }
   .ball .num { transition: filter 0.2s, transform 0.2s; }
   .ball.land { animation: pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1); }
   @keyframes pop { 0% { transform: scale(0.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
@@ -211,6 +212,21 @@
   }
   .chip.offline { border-style: dashed; }
   .chip.offline .bl { background: var(--sage); }
+  .chip.latest {
+    background: linear-gradient(135deg, var(--champagne), var(--gold-deep));
+    border-color: transparent; color: #fffdf8;
+    box-shadow: 0 6px 18px rgba(176,141,62,0.45);
+    animation: chipIn 0.3s ease, latestGlow 2s ease-in-out 0.3s infinite;
+  }
+  .chip.latest .bl { background: rgba(255,253,248,0.28); color: #fffdf8; }
+  @keyframes latestGlow {
+    0%, 100% { box-shadow: 0 6px 18px rgba(176,141,62,0.45); }
+    50% { box-shadow: 0 6px 30px rgba(176,141,62,0.8); }
+  }
+  .newest {
+    font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--ink-soft); vertical-align: middle; margin-left: 10px;
+  }
   .empty-note { color: var(--ink-soft); font-size: 14px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
   /* ---------- board ---------- */
@@ -256,9 +272,13 @@
 </head>
 <body>
 
+<div class="couple-bg" aria-hidden="true">
+  <img id="coupleA" class="show" src="couple-1.jpg" alt="" />
+  <img id="coupleB" src="couple-2.jpg" alt="" />
+</div>
+
 <header>
   <div class="names">Derrick <span class="amp">&amp;</span> Jolene</div>
-  <img class="photo-arch" id="couplePhoto" src="couple-1.jpg" alt="Derrick and Jolene" />
   <div class="rule"><span>✦</span></div>
 </header>
 
@@ -290,7 +310,7 @@
     </div>
 
     <div class="recent">
-      <h3>Recent calls</h3>
+      <h3>Recent calls <span class="newest">newest first</span></h3>
       <div class="chips" id="chips"><span class="empty-note">Nothing called yet.</span></div>
     </div>
   </section>
@@ -329,15 +349,13 @@
   var overrideBtn = document.getElementById('overrideBtn');
   var flash = document.getElementById('flash');
   var resetBtn = document.getElementById('resetBtn');
-  var couplePhoto = document.getElementById('couplePhoto');
-  var photoIdx = 0;
+  var coupleA = document.getElementById('coupleA');
+  var coupleB = document.getElementById('coupleB');
+  var photoFlip = false;
   function swapPhoto() {
-    photoIdx = 1 - photoIdx;
-    couplePhoto.style.opacity = '0';
-    setTimeout(function () {
-      couplePhoto.src = photoIdx === 0 ? 'couple-1.jpg' : 'couple-2.jpg';
-      couplePhoto.style.opacity = '1';
-    }, 350);
+    photoFlip = !photoFlip;
+    coupleA.classList.toggle('show', !photoFlip);
+    coupleB.classList.toggle('show', photoFlip);
   }
 
   function letterFor(n) { return LETTERS[Math.ceil(n / 15) - 1]; }
@@ -384,9 +402,9 @@
     if (!state.called.length) {
       chips.innerHTML = '<span class="empty-note">Nothing called yet.</span>';
     } else {
-      state.called.slice(-10).reverse().forEach(function (n) {
+      state.called.slice(-10).reverse().forEach(function (n, i) {
         var chip = document.createElement('span');
-        chip.className = 'chip' + (state.offline[n] ? ' offline' : '');
+        chip.className = 'chip' + (state.offline[n] ? ' offline' : '') + (i === 0 ? ' latest' : '');
         var bl = document.createElement('span');
         bl.className = 'bl';
         bl.textContent = letterFor(n);
