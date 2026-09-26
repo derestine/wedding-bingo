@@ -270,6 +270,32 @@
     0%, 100% { box-shadow: 0 6px 18px rgba(189,138,111,0.45); }
     50% { box-shadow: 0 6px 30px rgba(189,138,111,0.8); }
   }
+  /* undo + game tag */
+  .btn-small { padding: 8px 18px !important; font-size: 11px !important; letter-spacing: 0.18em; margin-top: 10px; }
+  .btn-ghost:disabled { opacity: 0.35; cursor: default; }
+  .set-row .btn-small { margin-top: 0; }
+  .game-tag { font-family: 'Jost', sans-serif; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; margin-left: 12px; vertical-align: middle; white-space: nowrap; }
+  .board-head .actions { display: flex; gap: 10px; }
+  /* win checker modal */
+  .modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(74,65,55,0.45); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--card); border: 1px solid var(--line); border-radius: 16px; max-width: 580px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 28px 30px; box-shadow: 0 30px 80px rgba(74,65,55,0.35); position: relative; text-align: left; }
+  .modal h3 { font-family: 'Pinyon Script', cursive; font-size: 34px; font-weight: 400; margin-bottom: 2px; }
+  .modal .sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; }
+  .modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 24px; color: var(--ink-soft); cursor: pointer; line-height: 1; }
+  .modal-close:hover { color: var(--ink); }
+  .check-photo { width: 100%; border-radius: 10px; border: 1px solid var(--line); margin: 12px 0 4px; display: none; }
+  .check-photo.show { display: block; }
+  .pick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 14px 0; }
+  .pick { aspect-ratio: 1; border-radius: 50%; border: 1px dashed rgba(138,155,126,0.45); background: transparent; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all 0.15s; }
+  .pick:hover { border-color: var(--sage); color: var(--ink); }
+  .pick.on { background: linear-gradient(135deg, #e6c3ae, #c08d73); border: 1px solid #a1765f; color: #fffdf8; }
+  .check-result { margin-top: 14px; padding: 14px 18px; border-radius: 10px; font-size: 15px; display: none; line-height: 1.55; }
+  .check-result.show { display: block; }
+  .check-result.ok { background: rgba(138,155,126,0.14); border: 1px solid var(--sage); color: #5c6b52; }
+  .check-result.no { background: rgba(198,154,134,0.14); border: 1px solid #c69a86; color: #8a5f4c; }
+  .modal .row { display: flex; gap: 10px; margin-top: 4px; align-items: center; flex-wrap: wrap; }
+  .modal .row .btn-small { margin-top: 0; }
   .newest {
     font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
     color: var(--ink-soft); vertical-align: middle; margin-left: 10px;
@@ -343,6 +369,7 @@
   <div class="set-row"><label class="lbl">Confetti</label><label class="switch"><input type="checkbox" id="setConfetti" /><span class="track"></span></label></div>
   <div class="set-row"><label class="lbl">Ball glow</label><label class="switch"><input type="checkbox" id="setGlow" /><span class="track"></span></label></div>
   <div class="set-row"><label class="lbl">Photo backdrop</label><label class="switch"><input type="checkbox" id="setPhotos" /><span class="track"></span></label></div>
+  <div class="set-row"><label class="lbl">Fullscreen</label><button class="btn-ghost btn-small" id="fsBtn" style="margin-left:auto">Enter</button></div>
   <div class="set-row"><label class="lbl">Settings icon</label><label class="switch"><input type="checkbox" id="setIcon" /><span class="track"></span></label></div>
   <div class="set-note">Turn the icon off to hide it. Triple-click the title to bring it back.</div>
 </div>
@@ -372,6 +399,7 @@
     </div>
     <button class="btn" id="drawBtn">Draw Number</button>
     <div class="hint">or press <kbd>Space</kbd></div>
+    <button class="btn-ghost btn-small" id="undoBtn" title="Shortcut: U" disabled>Undo last draw</button>
 
     <div class="override">
       <h3>Called offline?</h3>
@@ -391,12 +419,32 @@
 
   <section class="panel">
     <div class="board-head">
-      <h3>Bingo Card</h3>
-      <button class="btn btn-ghost" id="resetBtn">New game</button>
+      <div><h3 style="display:inline">Bingo Card</h3><span class="game-tag" id="gameTag">Game 1</span></div>
+      <div class="actions">
+        <button class="btn btn-ghost" id="checkBtn">Check win</button>
+        <button class="btn btn-ghost" id="resetBtn">New game</button>
+      </div>
     </div>
     <div class="board" id="board"></div>
   </section>
 </main>
+
+<div class="modal-overlay" id="checkModal">
+  <div class="modal">
+    <button class="modal-close" id="checkClose" title="Close">&times;</button>
+    <h3>Check a win</h3>
+    <p class="sub">Snap the paper card, tap its numbers below, then verify.</p>
+    <input type="file" id="checkPhotoInput" accept="image/*" capture="environment" hidden />
+    <button class="btn-ghost btn-small" id="checkPhotoBtn" style="margin-top:0">Snap card photo</button>
+    <img class="check-photo" id="checkPhotoImg" alt="Paper card photo" />
+    <div class="pick-grid" id="pickGrid"></div>
+    <div class="row">
+      <button class="btn" id="verifyBtn">Verify</button>
+      <button class="btn-ghost btn-small" id="clearPicks">Clear</button>
+    </div>
+    <div class="check-result" id="checkResult"></div>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -409,6 +457,7 @@
   try {
     var saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
     if (saved && Array.isArray(saved.called)) state = saved;
+  if (!state.game) state.game = 1;
   } catch (e) { /* fresh start */ }
 
   var ball = document.getElementById('ball');
@@ -423,6 +472,10 @@
   var overrideBtn = document.getElementById('overrideBtn');
   var flash = document.getElementById('flash');
   var resetBtn = document.getElementById('resetBtn');
+  var undoBtn = document.getElementById('undoBtn');
+  var gameTag = document.getElementById('gameTag');
+  var checkBtn = document.getElementById('checkBtn');
+  var fsBtn = document.getElementById('fsBtn');
   var coupleA = document.getElementById('coupleA');
   var coupleB = document.getElementById('coupleB');
   var photoFlip = false;
@@ -501,6 +554,8 @@
     var pool = remaining();
     drawBtn.disabled = pool.length === 0;
     drawBtn.textContent = pool.length === 0 ? 'All called!' : 'Draw Number';
+    undoBtn.disabled = drawing || !state.called.length;
+    gameTag.textContent = 'Game ' + (state.game || 1);
     save();
   }
 
@@ -665,6 +720,16 @@
     overrideInput.focus();
   }
 
+  function undoLast() {
+    if (drawing || !state.called.length) return;
+    var n = state.called.pop();
+    delete state.offline[n];
+    state.current = state.called.length ? state.called[state.called.length - 1] : null;
+    drawLabel.textContent = state.called.length ? 'Number ' + state.called.length + ' of ' + TOTAL : '\u00a0';
+    render();
+  }
+  undoBtn.addEventListener('click', undoLast);
+
   drawBtn.addEventListener('click', draw);
   overrideBtn.addEventListener('click', doOverride);
   overrideInput.addEventListener('keydown', function (e) {
@@ -675,11 +740,99 @@
       e.preventDefault();
       draw();
     }
+    if (document.activeElement !== overrideInput && !e.metaKey && !e.ctrlKey) {
+      if ((e.key === 'u' || e.key === 'U') && !drawing) undoLast();
+      if ((e.key === 'f' || e.key === 'F') && !checkModal.classList.contains('open')) toggleFS();
+    }
   });
   resetBtn.addEventListener('click', function () {
     if (state.called.length && confirm('Start a new game? This clears all called numbers.')) {
-      state = { called: [], current: null, offline: {} };
+      state = { called: [], current: null, offline: {}, game: (state.game || 1) + 1 };
       render();
+    }
+  });
+
+  /* fullscreen */
+  function toggleFS() {
+    if (document.fullscreenElement) { document.exitFullscreen(); }
+    else { try { document.documentElement.requestFullscreen(); } catch (e) {} }
+  }
+  fsBtn.addEventListener('click', toggleFS);
+  document.addEventListener('fullscreenchange', function () {
+    fsBtn.textContent = document.fullscreenElement ? 'Exit' : 'Enter';
+  });
+
+  /* win checker */
+  var checkModal = document.getElementById('checkModal');
+  var pickGrid = document.getElementById('pickGrid');
+  var checkPhotoInput = document.getElementById('checkPhotoInput');
+  var checkPhotoImg = document.getElementById('checkPhotoImg');
+  var checkResult = document.getElementById('checkResult');
+  var picked = {};
+  (function buildPickGrid() {
+    for (var c = 0; c < 5; c++) {
+      for (var r = 1; r <= 15; r++) {
+        (function (n) {
+          var b = document.createElement('button');
+          b.className = 'pick';
+          b.textContent = n;
+          b.addEventListener('click', function () {
+            if (picked[n]) { delete picked[n]; b.classList.remove('on'); }
+            else { picked[n] = true; b.classList.add('on'); }
+            checkResult.className = 'check-result';
+          });
+          pickGrid.appendChild(b);
+        })(c * 15 + r);
+      }
+    }
+  })();
+  function openCheck() {
+    checkModal.classList.add('open');
+  }
+  function closeCheck() {
+    checkModal.classList.remove('open');
+  }
+  checkBtn.addEventListener('click', openCheck);
+  document.getElementById('checkClose').addEventListener('click', closeCheck);
+  checkModal.addEventListener('click', function (e) {
+    if (e.target === checkModal) closeCheck();
+  });
+  document.getElementById('checkPhotoBtn').addEventListener('click', function () {
+    checkPhotoInput.click();
+  });
+  checkPhotoInput.addEventListener('change', function () {
+    var f = this.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      checkPhotoImg.src = rd.result;
+      checkPhotoImg.classList.add('show');
+    };
+    rd.readAsDataURL(f);
+  });
+  document.getElementById('clearPicks').addEventListener('click', function () {
+    picked = {};
+    var btns = pickGrid.children;
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('on');
+    checkResult.className = 'check-result';
+  });
+  document.getElementById('verifyBtn').addEventListener('click', function () {
+    var nums = Object.keys(picked).map(Number);
+    if (!nums.length) {
+      checkResult.textContent = 'Tap the numbers on the paper card first.';
+      checkResult.className = 'check-result show no';
+      return;
+    }
+    var missing = nums.filter(function (n) { return state.called.indexOf(n) === -1; })
+                       .sort(function (a, b) { return a - b; });
+    if (!missing.length) {
+      checkResult.textContent = 'Verified — all ' + nums.length + ' numbers have been called. BINGO!';
+      checkResult.className = 'check-result show ok';
+      goldConfetti(false);
+    } else {
+      checkResult.textContent = 'Not yet — still missing: ' +
+        missing.map(function (n) { return letterFor(n) + ' ' + n; }).join(', ');
+      checkResult.className = 'check-result show no';
     }
   });
 
