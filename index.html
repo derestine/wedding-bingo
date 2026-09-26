@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
   :root {
+    --ball: 268px;
     --ivory: #faf7ef;
     --ivory-2: #f1ebdc;
     --ink: #4a4137;
@@ -108,9 +109,9 @@
     font-family: 'Cormorant Garamond', serif; font-style: italic;
     font-size: 20px; color: var(--ink-soft); min-height: 28px; margin-bottom: 6px;
   }
-  .ball-wrap { display: flex; justify-content: center; align-items: center; min-height: 300px; margin: 8px 0 4px; }
+  .ball-wrap { display: flex; justify-content: center; align-items: center; min-height: calc(var(--ball) * 1.12); margin: 8px 0 4px; }
   .ball {
-    width: 268px; height: 268px; border-radius: 50%;
+    width: var(--ball); height: var(--ball); border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     background: radial-gradient(circle at 50% 16%, #fffdf8 0%, #faf5e8 34%, #f0e3c8 68%, #e0cda4 100%);
     border: 2px solid var(--gold);
@@ -121,12 +122,12 @@
   }
   .ball .num {
     font-family: 'Cormorant Garamond', serif; font-weight: 700;
-    font-size: 118px; line-height: 0.8;
+    font-size: calc(var(--ball) * 0.44); line-height: 0.8;
     transform: translateY(-0.24em); /* measured: Cormorant figures sit low in the line box */
     font-variant-numeric: tabular-nums;
   }
   .ball.idle { border-style: dashed; box-shadow: none; }
-  .ball.idle .num { font-size: 72px; color: var(--ink-soft); font-style: italic; }
+  .ball.idle .num { font-size: calc(var(--ball) * 0.27); color: var(--ink-soft); font-style: italic; }
   .ball.rolling { animation: wobble 0.32s ease-in-out infinite; }
   @keyframes wobble { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.03); } }
   .ball.rolling .num.fast { filter: blur(2px); transform: translateY(-0.24em) scale(0.94); }
@@ -146,7 +147,8 @@
   .ball-wrap { position: relative; }
   .ball-wrap.glow::before {
     content: ""; position: absolute; top: 50%; left: 50%;
-    width: 304px; height: 304px; margin: -152px 0 0 -152px; border-radius: 50%;
+    width: calc(var(--ball) * 1.134); height: calc(var(--ball) * 1.134);
+    margin: calc(var(--ball) * -0.567) 0 0 calc(var(--ball) * -0.567); border-radius: 50%;
     background: conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(233,186,118,0.9) 325deg, rgba(255,246,230,0.95) 345deg, transparent 360deg);
     -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
     mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
@@ -155,7 +157,8 @@
   }
   .ball-wrap.glow::after {
     content: ""; position: absolute; top: 50%; left: 50%;
-    width: 284px; height: 284px; margin: -142px 0 0 -142px; border-radius: 50%;
+    width: calc(var(--ball) * 1.06); height: calc(var(--ball) * 1.06);
+    margin: calc(var(--ball) * -0.53) 0 0 calc(var(--ball) * -0.53); border-radius: 50%;
     box-shadow: 0 0 55px 20px rgba(233,186,118,0.55), 0 0 130px 45px rgba(233,186,118,0.28);
     animation: glowPulse 2.2s ease-in-out infinite;
     pointer-events: none;
@@ -307,16 +310,44 @@
   @media (max-width: 520px) {
     body { padding: 24px 12px 48px; }
     .panel { padding: 24px 16px; }
-    .ball { width: 216px; height: 216px; }
-    .ball .num { font-size: 96px; }
-    .ball.idle .num { font-size: 58px; }
+    :root { --ball: 216px; }
     .ball-wrap { min-height: 248px; }
-    .ball-wrap.glow::before { width: 246px; height: 246px; margin: -123px 0 0 -123px; }
-    .ball-wrap.glow::after { width: 230px; height: 230px; margin: -115px 0 0 -115px; }
     .modal { padding: 22px 18px; }
     .modal-overlay { padding: 12px; }
     .pick { font-size: 13px; }
     .settings-panel { right: 12px; left: 12px; width: auto; }
+  }
+
+  /* ---------- laptop kiosk: everything fits one screen, no scroll ---------- */
+  @media (min-width: 921px) {
+    :root { --ball: min(196px, 25vh); }
+    body { height: 100vh; height: 100dvh; overflow: hidden; padding: 10px 22px 12px; }
+    .names { font-size: clamp(36px, 6vh, 58px); }
+    .rule { margin: 6px auto 4px; }
+    .progress { margin: 8px 0 2px; gap: 28px; }
+    .progress b { font-size: 26px; }
+    main { flex: 1; min-height: 0; margin-top: 8px; grid-template-columns: 330px minmax(0, 1fr); gap: 18px; max-width: 1720px; }
+    .panel { min-height: 0; padding: 16px 18px; display: flex; flex-direction: column; overflow: hidden; }
+    .stage { overflow-y: auto; }
+    .draw-label { font-size: 17px; min-height: 24px; }
+    .ball-wrap { min-height: 0; margin: 2px 0 6px; }
+    #drawBtn { padding: 13px 34px; font-size: 14px; }
+    .hint { margin-top: 8px; }
+    #undoBtn { margin-top: 8px; }
+    .override { margin-top: 14px; padding-top: 14px; }
+    .override h3 { font-size: 24px; }
+    .override p { display: none; }
+    .override-row input { padding: 9px; font-size: 17px; }
+    .flash { min-height: 0; margin-top: 6px; }
+    .recent { margin-top: 14px; flex: 1; min-height: 60px; display: flex; flex-direction: column; overflow: hidden; }
+    .recent h3 { font-size: 24px; margin-bottom: 8px; }
+    .chips { flex: 1; min-height: 0; overflow-y: auto; align-content: flex-start; }
+    .board-head { margin-bottom: 8px; }
+    .board-head h3 { font-size: 26px; }
+    .board { flex: 1; min-height: 0; gap: 6px; }
+    .col { display: grid; grid-template-rows: repeat(16, minmax(0, 1fr)); gap: 3px; height: 100%; }
+    .col-head { width: auto; height: 90%; aspect-ratio: 1; justify-self: center; align-self: center; margin-bottom: 0; font-size: clamp(13px, 2.6vh, 22px); }
+    .cell { width: auto; height: 94%; aspect-ratio: 1; justify-self: center; align-self: center; font-size: clamp(10px, 2vh, 15px); }
   }
   .newest {
     font-family: 'Jost', sans-serif; font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
