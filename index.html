@@ -3,210 +3,235 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wedding Hamper Lucky Draw</title>
+<title>Derrick &amp; Jolene · Hamper Lucky Draw</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
   :root {
-    --bg: #0d0d15;
-    --bg2: #14141f;
-    --gold: #e8c25a;
-    --gold-deep: #b8860b;
-    --gold-soft: rgba(232, 194, 90, 0.14);
-    --cream: #faf5e9;
-    --muted: #9a93a8;
-    --card: #171722;
-    --line: rgba(232, 194, 90, 0.22);
+    --ivory: #f8f4ea;
+    --ivory-2: #f1ebdc;
+    --ink: #4a4137;
+    --ink-soft: #8a7d6b;
+    --gold: #b08d3e;
+    --gold-deep: #8f6f2a;
+    --champagne: #d9bd7f;
+    --sage: #8a9b7e;
+    --blush: #d9b8a6;
+    --card: #fffdf8;
+    --line: rgba(176, 141, 62, 0.28);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Jost', system-ui, sans-serif;
     background:
-      radial-gradient(1200px 600px at 50% -10%, rgba(232,194,90,0.10), transparent 60%),
-      radial-gradient(900px 500px at 90% 110%, rgba(120,80,180,0.08), transparent 60%),
-      var(--bg);
-    color: var(--cream);
+      radial-gradient(1000px 480px at 12% 0%, rgba(217, 184, 166, 0.20), transparent 60%),
+      radial-gradient(1000px 520px at 88% 8%, rgba(138, 155, 126, 0.16), transparent 60%),
+      radial-gradient(1400px 700px at 50% 110%, rgba(217, 189, 127, 0.18), transparent 60%),
+      var(--ivory);
+    color: var(--ink);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 28px 20px 60px;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 34px 20px 60px;
   }
-  header { text-align: center; margin-bottom: 6px; }
-  .kicker {
-    letter-spacing: 0.45em; font-size: 12px; font-weight: 600;
-    color: var(--gold); text-transform: uppercase; margin-bottom: 10px;
-  }
-  h1 {
-    font-family: 'Playfair Display', serif; font-weight: 800;
-    font-size: clamp(30px, 5vw, 52px); line-height: 1.1;
-    background: linear-gradient(135deg, #f7e2a0, var(--gold) 45%, #c9982f 70%, #f7e2a0);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .sub { color: var(--muted); margin-top: 8px; font-size: 14px; letter-spacing: 0.12em; }
 
-  .progress {
-    display: flex; gap: 26px; margin: 22px 0 6px;
-    font-size: 14px; color: var(--muted);
+  /* ---------- header ---------- */
+  header { text-align: center; }
+  .names {
+    font-family: 'Pinyon Script', cursive;
+    font-size: clamp(52px, 9vw, 96px);
+    line-height: 1.05; color: var(--ink);
   }
-  .progress b { color: var(--cream); font-size: 20px; font-weight: 700; }
+  .names .amp { color: var(--gold); font-size: 0.72em; }
+  .rule { display: flex; align-items: center; gap: 14px; margin: 14px auto 12px; max-width: 420px; }
+  .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .rule span { color: var(--gold); font-size: 13px; }
+  .photo-arch {
+    width: 190px; height: 258px; margin: 18px auto 4px;
+    border-radius: 999px 999px 10px 10px;
+    object-fit: cover; object-position: center 22%;
+    border: 2px solid var(--gold);
+    outline: 1px solid rgba(176,141,62,0.45); outline-offset: 6px;
+    box-shadow: 0 18px 44px rgba(140, 110, 50, 0.25);
+    transition: opacity 0.5s ease;
+    background: var(--ivory-2);
+  }
+  .event-title {
+    font-size: 15px; letter-spacing: 0.42em; text-transform: uppercase; font-weight: 500;
+    color: var(--ink); text-indent: 0.42em;
+  }
+  .event-sub {
+    margin-top: 8px; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--ink-soft); text-indent: 0.3em;
+  }
+
+  .progress { display: flex; gap: 34px; margin: 26px 0 4px; }
   .progress div { text-align: center; }
-  .progress span { display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2px; }
+  .progress b {
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
+    font-size: 34px; color: var(--ink); display: block; line-height: 1;
+  }
+  .progress span { font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-soft); }
 
   main {
     width: 100%; max-width: 1180px;
-    display: grid; grid-template-columns: 1fr 1.15fr; gap: 26px;
-    margin-top: 20px; align-items: start;
+    display: grid; grid-template-columns: 1fr 1.12fr; gap: 26px;
+    margin-top: 22px; align-items: start;
   }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  @media (max-width: 920px) { main { grid-template-columns: 1fr; } }
 
   .panel {
-    background: linear-gradient(180deg, var(--card), #12121b);
-    border: 1px solid var(--line); border-radius: 22px;
-    padding: 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    background: var(--card);
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 32px 30px; position: relative;
+    box-shadow: 0 18px 50px rgba(120, 95, 40, 0.10);
+  }
+  .panel::before {
+    content: ""; position: absolute; inset: 8px;
+    border: 1px solid rgba(176, 141, 62, 0.18); border-radius: 3px;
+    pointer-events: none;
   }
 
-  /* ---- stage ---- */
+  /* ---------- stage ---------- */
   .stage { text-align: center; }
-  .ball-wrap { display: flex; justify-content: center; margin: 10px 0 6px; min-height: 300px; align-items: center; }
+  .draw-label {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 20px; color: var(--ink-soft); min-height: 28px; margin-bottom: 6px;
+  }
+  .ball-wrap { display: flex; justify-content: center; align-items: center; min-height: 300px; margin: 8px 0 4px; }
   .ball {
-    width: 270px; height: 270px; border-radius: 50%;
+    width: 268px; height: 268px; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: radial-gradient(circle at 32% 28%, #fff7dd 0%, #f3d67c 22%, var(--gold) 48%, #a8760d 82%, #7d5c08 100%);
-    box-shadow: 0 0 0 10px rgba(232,194,90,0.10), 0 0 90px rgba(232,194,90,0.35), inset 0 -18px 40px rgba(0,0,0,0.25);
-    color: #3a2a05; position: relative;
-    transition: transform 0.15s ease;
+    background: radial-gradient(circle at 34% 28%, #fffefb 0%, #faf5e8 40%, #efe4cb 75%, #e2d2ae 100%);
+    border: 2px solid var(--gold);
+    outline: 1px solid rgba(176,141,62,0.4); outline-offset: 7px;
+    box-shadow: 0 22px 60px rgba(140, 110, 50, 0.22), inset 0 -14px 34px rgba(176,141,62,0.12);
+    color: var(--ink); position: relative;
   }
   .ball .letter {
-    font-size: 44px; font-weight: 700; letter-spacing: 0.08em; line-height: 1;
-    opacity: 0.75;
+    font-size: 15px; font-weight: 600; letter-spacing: 0.5em; text-indent: 0.5em;
+    text-transform: uppercase; color: var(--gold-deep); margin-bottom: 2px;
   }
   .ball .num {
-    font-family: 'Playfair Display', serif; font-weight: 800;
+    font-family: 'Cormorant Garamond', serif; font-weight: 700;
     font-size: 118px; line-height: 1;
   }
-  .ball.idle {
-    background: radial-gradient(circle at 32% 28%, #2b2b3a 0%, #1c1c28 55%, #12121a 100%);
-    color: var(--muted); box-shadow: 0 0 0 10px rgba(232,194,90,0.06), 0 0 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.5);
-  }
-  .ball.idle .num { font-size: 64px; }
+  .ball.idle { border-style: dashed; box-shadow: none; }
+  .ball.idle .num { font-size: 72px; color: var(--ink-soft); font-style: italic; }
   .ball.rolling { animation: wobble 0.32s ease-in-out infinite; }
-  @keyframes wobble {
-    0%, 100% { transform: rotate(-4deg) scale(1); }
-    50% { transform: rotate(4deg) scale(1.03); }
-  }
-  .ball.land { animation: pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1); }
-  @keyframes pop {
-    0% { transform: scale(0.82); }
-    60% { transform: scale(1.07); }
-    100% { transform: scale(1); }
-  }
-  .draw-label { color: var(--muted); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 14px; min-height: 18px; }
+  @keyframes wobble { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.03); } }
+  .ball.land { animation: pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1); }
+  @keyframes pop { 0% { transform: scale(0.82); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
 
   .btn {
-    font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    font-family: 'Jost', sans-serif; font-weight: 600; letter-spacing: 0.24em; text-indent: 0.24em; text-transform: uppercase;
     border: none; cursor: pointer; border-radius: 999px;
-    padding: 18px 54px; font-size: 17px; color: #2b1f04;
-    background: linear-gradient(135deg, #f7e2a0, var(--gold) 55%, #d9a93b);
-    box-shadow: 0 10px 30px rgba(232,194,90,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+    padding: 18px 58px; font-size: 15px; color: #fbf7ec;
+    background: linear-gradient(135deg, #5a5145, #3f3a30);
+    box-shadow: 0 12px 28px rgba(63, 58, 48, 0.28), inset 0 1px 0 rgba(255,255,255,0.15);
     transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s;
   }
-  .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(232,194,90,0.45); }
+  .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(63,58,48,0.34), 0 0 0 3px rgba(176,141,62,0.25); }
   .btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .btn-ghost {
-    background: transparent; color: var(--muted); border: 1px solid var(--line);
-    box-shadow: none; padding: 12px 30px; font-size: 13px;
-  }
-  .btn-ghost:hover:not(:disabled) { color: var(--cream); border-color: var(--gold); box-shadow: none; }
-  .hint { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .hint { margin-top: 12px; font-size: 12px; color: var(--ink-soft); letter-spacing: 0.06em; }
   .hint kbd {
-    border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
-    font-family: inherit; font-size: 11px; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line); border-radius: 6px; padding: 1px 8px;
+    font-family: inherit; font-size: 11px; background: rgba(176,141,62,0.08);
   }
 
-  /* ---- override ---- */
-  .override { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 22px; }
-  .override h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
-  .override p { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  /* ---------- override ---------- */
+  .override { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 22px; text-align: left; }
+  .override h3 {
+    font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .override p { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 14px; line-height: 1.6; font-weight: 300; }
   .override-row { display: flex; gap: 10px; }
   .override-row input {
-    flex: 1; background: #0f0f18; border: 1px solid var(--line); border-radius: 12px;
-    color: var(--cream); font-size: 20px; font-weight: 700; text-align: center;
-    padding: 12px; outline: none; font-family: inherit; min-width: 0;
+    flex: 1; background: var(--ivory); border: 1px solid var(--line); border-radius: 10px;
+    color: var(--ink); font-size: 20px; font-weight: 600; text-align: center;
+    padding: 12px; outline: none; font-family: 'Cormorant Garamond', serif; min-width: 0;
   }
-  .override-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,194,90,0.15); }
+  .override-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(176,141,62,0.14); }
   .override-row button {
-    border-radius: 12px; border: none; cursor: pointer; padding: 0 22px;
-    background: rgba(232,194,90,0.14); color: var(--gold);
-    border: 1px solid var(--line); font-weight: 700; font-size: 14px; font-family: inherit;
-    transition: background 0.15s;
+    border-radius: 10px; cursor: pointer; padding: 0 24px;
+    background: transparent; color: var(--gold-deep);
+    border: 1px solid var(--gold); font-weight: 600; font-size: 13px; letter-spacing: 0.08em;
+    font-family: 'Jost', sans-serif; text-transform: uppercase; transition: all 0.15s;
   }
-  .override-row button:hover { background: rgba(232,194,90,0.24); }
-  .flash { font-size: 13px; margin-top: 10px; min-height: 18px; }
-  .flash.err { color: #ff9d9d; }
-  .flash.ok { color: #9fe6a0; }
+  .override-row button:hover { background: var(--gold); color: #fffdf8; }
+  .flash { font-size: 13px; margin-top: 10px; min-height: 19px; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 16px; }
+  .flash.err { color: #b0492f; }
+  .flash.ok { color: #6d7f5f; }
 
-  .recent { margin-top: 22px; }
-  .recent h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+  .recent { margin-top: 22px; text-align: left; }
+  .recent h3 { font-family: 'Pinyon Script', cursive; font-size: 28px; font-weight: 400; margin-bottom: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 42px; }
   .chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--gold-soft); border: 1px solid var(--line);
-    border-radius: 999px; padding: 7px 14px 7px 8px; font-weight: 700; font-size: 15px;
-    animation: chipIn 0.3s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fffdf8; border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 15px 6px 7px;
+    font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 18px;
+    animation: chipIn 0.3s ease; color: var(--ink);
   }
   @keyframes chipIn { from { transform: scale(0.7); opacity: 0; } }
   .chip .bl {
-    width: 26px; height: 26px; border-radius: 50%;
-    background: linear-gradient(135deg, #f7e2a0, var(--gold));
-    color: #3a2a05; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--champagne), var(--gold));
+    color: #fffdf8; font-size: 12px; font-family: 'Jost', sans-serif;
+    display: flex; align-items: center; justify-content: center; font-weight: 600;
+    letter-spacing: 0;
   }
   .chip.offline { border-style: dashed; }
-  .chip.offline .bl { background: #3a3a4a; color: var(--cream); }
-  .empty-note { color: var(--muted); font-size: 13px; }
+  .chip.offline .bl { background: var(--sage); }
+  .empty-note { color: var(--ink-soft); font-size: 14px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
-  /* ---- board ---- */
-  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .board-head h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  /* ---------- board ---------- */
+  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .board-head h3 { font-family: 'Pinyon Script', cursive; font-size: 30px; font-weight: 400; }
+  .btn-ghost {
+    background: transparent; color: var(--ink-soft); border: 1px solid var(--line);
+    box-shadow: none; padding: 10px 26px; font-size: 12px; letter-spacing: 0.2em;
+  }
+  .btn-ghost:hover:not(:disabled) { color: var(--gold-deep); border-color: var(--gold); box-shadow: none; transform: none; }
   .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
   .col { display: flex; flex-direction: column; gap: 7px; }
   .col-head {
-    text-align: center; font-family: 'Playfair Display', serif; font-weight: 800; font-size: 22px;
-    color: var(--gold); padding-bottom: 6px; border-bottom: 1px solid var(--line); margin-bottom: 4px;
+    text-align: center; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 24px;
+    color: var(--gold-deep); padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 4px;
   }
   .cell {
-    aspect-ratio: 1.35; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    font-size: 15px; font-weight: 600; color: var(--muted);
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    aspect-ratio: 1.4; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--ink-soft);
+    background: rgba(255,255,255,0.55); border: 1px solid rgba(176,141,62,0.16);
     transition: all 0.25s ease;
   }
   .cell.called {
-    background: linear-gradient(135deg, #f7e2a0, var(--gold) 60%, #d9a93b);
-    color: #3a2a05; font-weight: 800; border-color: transparent;
-    box-shadow: 0 4px 14px rgba(232,194,90,0.35);
+    background: linear-gradient(135deg, var(--champagne), var(--gold) 65%, var(--gold-deep));
+    color: #fffdf8; font-weight: 700; border-color: transparent;
+    box-shadow: 0 4px 14px rgba(176,141,62,0.35);
   }
-  .cell.latest {
-    animation: latestPulse 1.6s ease-in-out infinite;
-    outline: 2px solid #fff2c9; outline-offset: 2px;
-  }
+  .cell.latest { animation: latestPulse 1.8s ease-in-out infinite; outline: 2px solid var(--gold-deep); outline-offset: 2px; }
   @keyframes latestPulse {
-    0%, 100% { box-shadow: 0 4px 14px rgba(232,194,90,0.35); }
-    50% { box-shadow: 0 4px 26px rgba(232,194,90,0.75); }
+    0%, 100% { box-shadow: 0 4px 14px rgba(176,141,62,0.35); }
+    50% { box-shadow: 0 4px 28px rgba(176,141,62,0.7); }
   }
-  .danger-zone { margin-top: 20px; text-align: right; }
-  footer { margin-top: 40px; color: var(--muted); font-size: 12px; letter-spacing: 0.1em; text-align: center; }
+
+  footer { margin-top: 44px; text-align: center; }
+  footer .script { font-family: 'Pinyon Script', cursive; font-size: 26px; color: var(--ink-soft); }
+  footer .tiny { margin-top: 6px; font-size: 10px; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink-soft); text-indent: 0.34em; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="kicker">Wedding Celebration</div>
-  <h1>Hamper Lucky Draw</h1>
-  <div class="sub">B&ensp;I&ensp;N&ensp;G&ensp;O&ensp;&middot;&ensp;1 &ndash; 75</div>
+  <div class="names">Derrick <span class="amp">&amp;</span> Jolene</div>
+  <img class="photo-arch" id="couplePhoto" src="couple-1.jpg" alt="Derrick and Jolene" />
+  <div class="rule"><span>✦</span></div>
+  <div class="event-title">Hamper Lucky Draw</div>
+  <div class="event-sub">B&ensp;·&ensp;I&ensp;·&ensp;N&ensp;·&ensp;G&ensp;·&ensp;O&ensp;&ensp;1 – 75</div>
 </header>
 
 <div class="progress">
@@ -228,7 +253,7 @@
 
     <div class="override">
       <h3>Called offline?</h3>
-      <p>Enter a number already drawn off-screen and it will be marked as called, exactly as if the generator had picked it. It can never be drawn again.</p>
+      <p>If a number was already drawn off-screen, enter it here and it will be marked as called — exactly as if the generator had picked it. It can never be drawn again.</p>
       <div class="override-row">
         <input id="overrideInput" type="number" min="1" max="75" placeholder="1 – 75" inputmode="numeric" />
         <button id="overrideBtn">Mark called</button>
@@ -251,7 +276,10 @@
   </section>
 </main>
 
-<footer>Good luck &mdash; may the best hamper win.</footer>
+<footer>
+  <div class="script">Good luck, with love</div>
+  <div class="tiny">Derrick &amp; Jolene</div>
+</footer>
 
 <script>
 (function () {
@@ -279,6 +307,16 @@
   var overrideBtn = document.getElementById('overrideBtn');
   var flash = document.getElementById('flash');
   var resetBtn = document.getElementById('resetBtn');
+  var couplePhoto = document.getElementById('couplePhoto');
+  var photoIdx = 0;
+  function swapPhoto() {
+    photoIdx = 1 - photoIdx;
+    couplePhoto.style.opacity = '0';
+    setTimeout(function () {
+      couplePhoto.src = photoIdx === 0 ? 'couple-1.jpg' : 'couple-2.jpg';
+      couplePhoto.style.opacity = '1';
+    }, 350);
+  }
 
   function letterFor(n) { return LETTERS[Math.ceil(n / 15) - 1]; }
   function remaining() {
@@ -290,7 +328,6 @@
     try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
   }
 
-  // ---- board ----
   var cells = {};
   (function buildBoard() {
     for (var c = 0; c < 5; c++) {
@@ -321,7 +358,6 @@
     }
     calledCount.textContent = state.called.length;
     leftCount.textContent = TOTAL - state.called.length;
-    // recent chips (latest 10)
     chips.innerHTML = '';
     if (!state.called.length) {
       chips.innerHTML = '<span class="empty-note">Nothing called yet.</span>';
@@ -337,18 +373,17 @@
         chips.appendChild(chip);
       });
     }
-    // ball
     if (state.current == null) {
       ball.classList.add('idle');
       ballLetter.innerHTML = '&nbsp;';
       ballNum.textContent = '?';
       drawLabel.textContent = 'Ready when you are';
-      document.title = 'Wedding Hamper Lucky Draw';
+      document.title = 'Derrick & Jolene · Hamper Lucky Draw';
     } else {
       ball.classList.remove('idle');
       ballLetter.textContent = letterFor(state.current);
       ballNum.textContent = state.current;
-      document.title = letterFor(state.current) + ' ' + state.current + ' · Hamper Lucky Draw';
+      document.title = letterFor(state.current) + ' ' + state.current + ' · Derrick & Jolene';
     }
     var pool = remaining();
     drawBtn.disabled = pool.length === 0;
@@ -359,10 +394,10 @@
   function goldConfetti(big) {
     if (typeof confetti !== 'function') return;
     confetti({
-      particleCount: big ? 160 : 70,
+      particleCount: big ? 150 : 60,
       spread: big ? 90 : 60,
       origin: { y: 0.55 },
-      colors: ['#f7e2a0', '#e8c25a', '#d9a93b', '#fff7dd', '#b8860b'],
+      colors: ['#d9bd7f', '#b08d3e', '#f8f4ea', '#d9b8a6', '#8a9b7e', '#fffdf8'],
       disableForReducedMotion: true
     });
   }
@@ -374,7 +409,6 @@
     render();
   }
 
-  // ---- draw with slot-machine animation ----
   var drawing = false;
   function draw() {
     if (drawing) return;
@@ -401,13 +435,13 @@
         markCalled(finalNum, false);
         drawLabel.textContent = 'Number ' + state.called.length + ' of ' + TOTAL;
         goldConfetti(true);
+        swapPhoto();
         drawing = false;
         render();
       }
     })();
   }
 
-  // ---- override ----
   function showFlash(msg, ok) {
     flash.textContent = msg;
     flash.className = 'flash ' + (ok ? 'ok' : 'err');
@@ -417,7 +451,7 @@
     var raw = overrideInput.value.trim();
     var n = parseInt(raw, 10);
     if (!/^\d+$/.test(raw) || n < 1 || n > 75) {
-      showFlash('Enter a whole number between 1 and 75.', false);
+      showFlash('Please enter a whole number between 1 and 75.', false);
       return;
     }
     if (state.called.indexOf(n) !== -1) {
@@ -425,7 +459,7 @@
       return;
     }
     markCalled(n, true);
-    drawLabel.textContent = 'Marked from offline draw';
+    drawLabel.textContent = 'Marked from an offline draw';
     showFlash(letterFor(n) + ' ' + n + ' marked as called.', true);
     overrideInput.value = '';
     overrideInput.focus();
