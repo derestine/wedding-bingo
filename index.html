@@ -22,15 +22,49 @@
     --blush: #d9b8a6;
     --card: #fffdf8;
     --line: rgba(176, 141, 62, 0.28);
+    --glow-a: rgba(217, 184, 166, 0.26);
+    --glow-b: rgba(138, 155, 126, 0.16);
+    --glow-c: rgba(217, 189, 127, 0.18);
+  }
+  /* alternate wedding themes */
+  [data-theme="sage"] {
+    --ivory: #f3f5ec; --ivory-2: #e7ebda;
+    --ink: #44503c; --ink-soft: #7d8a72;
+    --gold: #a3903f; --gold-deep: #7f6f2c;
+    --champagne: #cfc07e; --sage: #7d9070; --blush: #cdb49b;
+    --card: #fbfdf6; --line: rgba(125, 144, 112, 0.30);
+    --glow-a: rgba(190, 200, 170, 0.30);
+    --glow-b: rgba(125, 144, 112, 0.20);
+    --glow-c: rgba(190, 180, 120, 0.16);
+  }
+  [data-theme="blush"] {
+    --ivory: #faf4ee; --ivory-2: #f3e7dd;
+    --ink: #54423a; --ink-soft: #97816f;
+    --gold: #b08d3e; --gold-deep: #8f6f2a;
+    --champagne: #ddbd8a; --sage: #9aa08a; --blush: #cf9d86;
+    --card: #fffdfa; --line: rgba(207, 157, 134, 0.32);
+    --glow-a: rgba(217, 170, 150, 0.30);
+    --glow-b: rgba(207, 157, 134, 0.18);
+    --glow-c: rgba(217, 189, 127, 0.16);
+  }
+  [data-theme="pearl"] {
+    --ivory: #f6f7f6; --ivory-2: #e9ebe9;
+    --ink: #42464a; --ink-soft: #82888d;
+    --gold: #9c8f52; --gold-deep: #77693a;
+    --champagne: #cfc79b; --sage: #8b948e; --blush: #c4b8ae;
+    --card: #ffffff; --line: rgba(140, 145, 140, 0.30);
+    --glow-a: rgba(200, 205, 200, 0.35);
+    --glow-b: rgba(160, 170, 165, 0.20);
+    --glow-c: rgba(190, 185, 140, 0.14);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { overflow-x: hidden; }
   body {
     font-family: 'Jost', system-ui, sans-serif;
     background:
-      radial-gradient(1000px 480px at 12% 0%, rgba(217, 184, 166, 0.26), transparent 60%),
-      radial-gradient(1000px 520px at 88% 8%, rgba(138, 155, 126, 0.16), transparent 60%),
-      radial-gradient(1400px 700px at 50% 110%, rgba(217, 189, 127, 0.18), transparent 60%),
+      radial-gradient(1000px 480px at 12% 0%, var(--glow-a), transparent 60%),
+      radial-gradient(1000px 520px at 88% 8%, var(--glow-b), transparent 60%),
+      radial-gradient(1400px 700px at 50% 110%, var(--glow-c), transparent 60%),
       var(--ivory);
     color: var(--ink);
     min-height: 100vh;
@@ -204,6 +238,20 @@
   .switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fffdf8; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s; }
   .switch input:checked + .track { background: var(--gold); }
   .switch input:checked + .track::after { left: 23px; }
+  .set-sect { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
+    padding: 12px 0 2px; border-top: 1px solid rgba(176,141,62,0.15); }
+  .theme-row { display: flex; gap: 6px; padding: 10px 0 12px; }
+  .swatch { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer; font-family: 'Jost', sans-serif; padding: 2px; }
+  .swatch .dot { width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.12); transition: border-color 0.15s, transform 0.15s; }
+  .swatch:hover .dot { transform: scale(1.08); }
+  .swatch.active .dot { border-color: var(--gold-deep); }
+  .swatch .tname { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+  .swatch[data-t="ivory"] .dot { background: linear-gradient(135deg, #faf7ef 55%, #b08d3e 55%); }
+  .swatch[data-t="sage"] .dot { background: linear-gradient(135deg, #f3f5ec 55%, #7d9070 55%); }
+  .swatch[data-t="blush"] .dot { background: linear-gradient(135deg, #faf4ee 55%, #cf9d86 55%); }
+  .swatch[data-t="pearl"] .dot { background: linear-gradient(135deg, #f6f7f6 55%, #9aa39e 55%); }
   .set-note { font-size: 12px; color: var(--ink-soft); opacity: 0.75; padding: 8px 0 4px; line-height: 1.5; }
 
   .btn {
@@ -418,7 +466,16 @@
   <div class="set-row"><label class="lbl">Photo backdrop</label><label class="switch"><input type="checkbox" id="setPhotos" /><span class="track"></span></label></div>
   <div class="set-row"><label class="lbl">Fullscreen</label><button class="btn-ghost btn-small" id="fsBtn" style="margin-left:auto">Enter</button></div>
   <div class="set-row"><label class="lbl">Settings icon</label><label class="switch"><input type="checkbox" id="setIcon" /><span class="track"></span></label></div>
-  <div class="set-note">Turn the icon off to hide it. Triple-click the title to bring it back.</div>
+  <div class="set-sect">Theme</div>
+  <div class="theme-row" id="themeRow">
+    <button class="swatch" data-t="ivory"><span class="dot"></span><span class="tname">Ivory</span></button>
+    <button class="swatch" data-t="sage"><span class="dot"></span><span class="tname">Sage</span></button>
+    <button class="swatch" data-t="blush"><span class="dot"></span><span class="tname">Blush</span></button>
+    <button class="swatch" data-t="pearl"><span class="dot"></span><span class="tname">Pearl</span></button>
+  </div>
+  <div class="set-sect">Games</div>
+  <div class="set-row"><label class="lbl">Reset all games</label><button class="btn-ghost btn-small" id="resetAllBtn" style="margin-left:auto">Reset</button></div>
+  <div class="set-note">Reset clears every game and returns to Game 1. Turn the icon off to hide it. Triple-click the title to bring it back.</div>
 </div>
 
 <div class="couple-bg" aria-hidden="true">
@@ -624,7 +681,7 @@
 
   /* settings */
   var SETTINGS_KEY = 'wedding-bingo-settings';
-  var settings = { duration: 2400, sound: true, confetti: true, glow: true, photos: true, icon: true };
+  var settings = { duration: 2400, sound: true, confetti: true, glow: true, photos: true, icon: true, theme: 'ivory' };
   try {
     var _s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
     if (_s) for (var k in settings) if (typeof _s[k] !== 'undefined') settings[k] = _s[k];
@@ -650,7 +707,14 @@
       o.start(); o.stop(audioCtx.currentTime + 0.09);
     } catch (e) {}
   }
+  function applyTheme() {
+    var t = settings.theme || 'ivory';
+    document.documentElement.setAttribute('data-theme', t);
+    var sw = document.querySelectorAll('#themeRow .swatch');
+    for (var i = 0; i < sw.length; i++) sw[i].classList.toggle('active', sw[i].getAttribute('data-t') === t);
+  }
   function applySettings() {
+    applyTheme();
     document.getElementById('durRange').value = settings.duration;
     document.getElementById('durVal').textContent = (settings.duration / 1000).toFixed(1) + 's';
     document.getElementById('setSound').checked = settings.sound;
@@ -697,6 +761,22 @@
       saveSettings();
       applySettings();
     });
+  });
+  var swatches = document.querySelectorAll('#themeRow .swatch');
+  for (var si = 0; si < swatches.length; si++) {
+    swatches[si].addEventListener('click', function () {
+      settings.theme = this.getAttribute('data-t');
+      saveSettings();
+      applyTheme();
+    });
+  }
+  document.getElementById('resetAllBtn').addEventListener('click', function () {
+    if (confirm('Reset all games? Every game is cleared and you return to Game 1.')) {
+      try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+      state = { called: [], current: null, offline: {}, game: 1 };
+      render();
+      settingsPanel.classList.remove('open');
+    }
   });
   applySettings();
 
