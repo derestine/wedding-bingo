@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wedding Hamper Lucky Draw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0d15;
+    --bg2: #14141f;
+    --gold: #e8c25a;
+    --gold-deep: #b8860b;
+    --gold-soft: rgba(232, 194, 90, 0.14);
+    --cream: #faf5e9;
+    --muted: #9a93a8;
+    --card: #171722;
+    --line: rgba(232, 194, 90, 0.22);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(232,194,90,0.10), transparent 60%),
+      radial-gradient(900px 500px at 90% 110%, rgba(120,80,180,0.08), transparent 60%),
+      var(--bg);
+    color: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 20px 60px;
+  }
+  header { text-align: center; margin-bottom: 6px; }
+  .kicker {
+    letter-spacing: 0.45em; font-size: 12px; font-weight: 600;
+    color: var(--gold); text-transform: uppercase; margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif; font-weight: 800;
+    font-size: clamp(30px, 5vw, 52px); line-height: 1.1;
+    background: linear-gradient(135deg, #f7e2a0, var(--gold) 45%, #c9982f 70%, #f7e2a0);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub { color: var(--muted); margin-top: 8px; font-size: 14px; letter-spacing: 0.12em; }
+
+  .progress {
+    display: flex; gap: 26px; margin: 22px 0 6px;
+    font-size: 14px; color: var(--muted);
+  }
+  .progress b { color: var(--cream); font-size: 20px; font-weight: 700; }
+  .progress div { text-align: center; }
+  .progress span { display: block; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2px; }
+
+  main {
+    width: 100%; max-width: 1180px;
+    display: grid; grid-template-columns: 1fr 1.15fr; gap: 26px;
+    margin-top: 20px; align-items: start;
+  }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(180deg, var(--card), #12121b);
+    border: 1px solid var(--line); border-radius: 22px;
+    padding: 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  }
+
+  /* ---- stage ---- */
+  .stage { text-align: center; }
+  .ball-wrap { display: flex; justify-content: center; margin: 10px 0 6px; min-height: 300px; align-items: center; }
+  .ball {
+    width: 270px; height: 270px; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 32% 28%, #fff7dd 0%, #f3d67c 22%, var(--gold) 48%, #a8760d 82%, #7d5c08 100%);
+    box-shadow: 0 0 0 10px rgba(232,194,90,0.10), 0 0 90px rgba(232,194,90,0.35), inset 0 -18px 40px rgba(0,0,0,0.25);
+    color: #3a2a05; position: relative;
+    transition: transform 0.15s ease;
+  }
+  .ball .letter {
+    font-size: 44px; font-weight: 700; letter-spacing: 0.08em; line-height: 1;
+    opacity: 0.75;
+  }
+  .ball .num {
+    font-family: 'Playfair Display', serif; font-weight: 800;
+    font-size: 118px; line-height: 1;
+  }
+  .ball.idle {
+    background: radial-gradient(circle at 32% 28%, #2b2b3a 0%, #1c1c28 55%, #12121a 100%);
+    color: var(--muted); box-shadow: 0 0 0 10px rgba(232,194,90,0.06), 0 0 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(0,0,0,0.5);
+  }
+  .ball.idle .num { font-size: 64px; }
+  .ball.rolling { animation: wobble 0.32s ease-in-out infinite; }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(-4deg) scale(1); }
+    50% { transform: rotate(4deg) scale(1.03); }
+  }
+  .ball.land { animation: pop 0.45s cubic-bezier(0.2, 1.6, 0.4, 1); }
+  @keyframes pop {
+    0% { transform: scale(0.82); }
+    60% { transform: scale(1.07); }
+    100% { transform: scale(1); }
+  }
+  .draw-label { color: var(--muted); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 14px; min-height: 18px; }
+
+  .btn {
+    font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    border: none; cursor: pointer; border-radius: 999px;
+    padding: 18px 54px; font-size: 17px; color: #2b1f04;
+    background: linear-gradient(135deg, #f7e2a0, var(--gold) 55%, #d9a93b);
+    box-shadow: 0 10px 30px rgba(232,194,90,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s;
+  }
+  .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(232,194,90,0.45); }
+  .btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-ghost {
+    background: transparent; color: var(--muted); border: 1px solid var(--line);
+    box-shadow: none; padding: 12px 30px; font-size: 13px;
+  }
+  .btn-ghost:hover:not(:disabled) { color: var(--cream); border-color: var(--gold); box-shadow: none; }
+  .hint { margin-top: 12px; font-size: 12px; color: var(--muted); }
+  .hint kbd {
+    border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
+    font-family: inherit; font-size: 11px; background: rgba(255,255,255,0.04);
+  }
+
+  /* ---- override ---- */
+  .override { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 22px; }
+  .override h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .override p { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .override-row { display: flex; gap: 10px; }
+  .override-row input {
+    flex: 1; background: #0f0f18; border: 1px solid var(--line); border-radius: 12px;
+    color: var(--cream); font-size: 20px; font-weight: 700; text-align: center;
+    padding: 12px; outline: none; font-family: inherit; min-width: 0;
+  }
+  .override-row input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(232,194,90,0.15); }
+  .override-row button {
+    border-radius: 12px; border: none; cursor: pointer; padding: 0 22px;
+    background: rgba(232,194,90,0.14); color: var(--gold);
+    border: 1px solid var(--line); font-weight: 700; font-size: 14px; font-family: inherit;
+    transition: background 0.15s;
+  }
+  .override-row button:hover { background: rgba(232,194,90,0.24); }
+  .flash { font-size: 13px; margin-top: 10px; min-height: 18px; }
+  .flash.err { color: #ff9d9d; }
+  .flash.ok { color: #9fe6a0; }
+
+  .recent { margin-top: 22px; }
+  .recent h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--gold-soft); border: 1px solid var(--line);
+    border-radius: 999px; padding: 7px 14px 7px 8px; font-weight: 700; font-size: 15px;
+    animation: chipIn 0.3s ease;
+  }
+  @keyframes chipIn { from { transform: scale(0.7); opacity: 0; } }
+  .chip .bl {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, #f7e2a0, var(--gold));
+    color: #3a2a05; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800;
+  }
+  .chip.offline { border-style: dashed; }
+  .chip.offline .bl { background: #3a3a4a; color: var(--cream); }
+  .empty-note { color: var(--muted); font-size: 13px; }
+
+  /* ---- board ---- */
+  .board-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .board-head h3 { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .col { display: flex; flex-direction: column; gap: 7px; }
+  .col-head {
+    text-align: center; font-family: 'Playfair Display', serif; font-weight: 800; font-size: 22px;
+    color: var(--gold); padding-bottom: 6px; border-bottom: 1px solid var(--line); margin-bottom: 4px;
+  }
+  .cell {
+    aspect-ratio: 1.35; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.25s ease;
+  }
+  .cell.called {
+    background: linear-gradient(135deg, #f7e2a0, var(--gold) 60%, #d9a93b);
+    color: #3a2a05; font-weight: 800; border-color: transparent;
+    box-shadow: 0 4px 14px rgba(232,194,90,0.35);
+  }
+  .cell.latest {
+    animation: latestPulse 1.6s ease-in-out infinite;
+    outline: 2px solid #fff2c9; outline-offset: 2px;
+  }
+  @keyframes latestPulse {
+    0%, 100% { box-shadow: 0 4px 14px rgba(232,194,90,0.35); }
+    50% { box-shadow: 0 4px 26px rgba(232,194,90,0.75); }
+  }
+  .danger-zone { margin-top: 20px; text-align: right; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 12px; letter-spacing: 0.1em; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="kicker">Wedding Celebration</div>
+  <h1>Hamper Lucky Draw</h1>
+  <div class="sub">B&ensp;I&ensp;N&ensp;G&ensp;O&ensp;&middot;&ensp;1 &ndash; 75</div>
+</header>
+
+<div class="progress">
+  <div><b id="calledCount">0</b><span>Called</span></div>
+  <div><b id="leftCount">75</b><span>Remaining</span></div>
+</div>
+
+<main>
+  <section class="panel stage">
+    <div class="draw-label" id="drawLabel">Ready when you are</div>
+    <div class="ball-wrap">
+      <div class="ball idle" id="ball">
+        <div class="letter" id="ballLetter">&nbsp;</div>
+        <div class="num" id="ballNum">?</div>
+      </div>
+    </div>
+    <button class="btn" id="drawBtn">Draw Number</button>
+    <div class="hint">or press <kbd>Space</kbd></div>
+
+    <div class="override">
+      <h3>Called offline?</h3>
+      <p>Enter a number already drawn off-screen and it will be marked as called, exactly as if the generator had picked it. It can never be drawn again.</p>
+      <div class="override-row">
+        <input id="overrideInput" type="number" min="1" max="75" placeholder="1 – 75" inputmode="numeric" />
+        <button id="overrideBtn">Mark called</button>
+      </div>
+      <div class="flash" id="flash"></div>
+    </div>
+
+    <div class="recent">
+      <h3>Recent calls</h3>
+      <div class="chips" id="chips"><span class="empty-note">Nothing called yet.</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="board-head">
+      <h3>Called board</h3>
+      <button class="btn btn-ghost" id="resetBtn">New game</button>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+</main>
+
+<footer>Good luck &mdash; may the best hamper win.</footer>
+
+<script>
+(function () {
+  'use strict';
+  var STORE_KEY = 'wedding-bingo-v1';
+  var LETTERS = ['B', 'I', 'N', 'G', 'O'];
+  var TOTAL = 75;
+
+  var state = { called: [], current: null, offline: {} };
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (saved && Array.isArray(saved.called)) state = saved;
+  } catch (e) { /* fresh start */ }
+
+  var ball = document.getElementById('ball');
+  var ballLetter = document.getElementById('ballLetter');
+  var ballNum = document.getElementById('ballNum');
+  var drawBtn = document.getElementById('drawBtn');
+  var drawLabel = document.getElementById('drawLabel');
+  var board = document.getElementById('board');
+  var chips = document.getElementById('chips');
+  var calledCount = document.getElementById('calledCount');
+  var leftCount = document.getElementById('leftCount');
+  var overrideInput = document.getElementById('overrideInput');
+  var overrideBtn = document.getElementById('overrideBtn');
+  var flash = document.getElementById('flash');
+  var resetBtn = document.getElementById('resetBtn');
+
+  function letterFor(n) { return LETTERS[Math.ceil(n / 15) - 1]; }
+  function remaining() {
+    var out = [];
+    for (var i = 1; i <= TOTAL; i++) if (state.called.indexOf(i) === -1) out.push(i);
+    return out;
+  }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  // ---- board ----
+  var cells = {};
+  (function buildBoard() {
+    for (var c = 0; c < 5; c++) {
+      var col = document.createElement('div');
+      col.className = 'col';
+      var head = document.createElement('div');
+      head.className = 'col-head';
+      head.textContent = LETTERS[c];
+      col.appendChild(head);
+      for (var r = 1; r <= 15; r++) {
+        var n = c * 15 + r;
+        var cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.textContent = n;
+        col.appendChild(cell);
+        cells[n] = cell;
+      }
+      board.appendChild(col);
+    }
+  })();
+
+  function render() {
+    for (var n = 1; n <= TOTAL; n++) {
+      var cell = cells[n];
+      var isCalled = state.called.indexOf(n) !== -1;
+      cell.classList.toggle('called', isCalled);
+      cell.classList.toggle('latest', isCalled && n === state.current);
+    }
+    calledCount.textContent = state.called.length;
+    leftCount.textContent = TOTAL - state.called.length;
+    // recent chips (latest 10)
+    chips.innerHTML = '';
+    if (!state.called.length) {
+      chips.innerHTML = '<span class="empty-note">Nothing called yet.</span>';
+    } else {
+      state.called.slice(-10).reverse().forEach(function (n) {
+        var chip = document.createElement('span');
+        chip.className = 'chip' + (state.offline[n] ? ' offline' : '');
+        var bl = document.createElement('span');
+        bl.className = 'bl';
+        bl.textContent = letterFor(n);
+        chip.appendChild(bl);
+        chip.appendChild(document.createTextNode(n));
+        chips.appendChild(chip);
+      });
+    }
+    // ball
+    if (state.current == null) {
+      ball.classList.add('idle');
+      ballLetter.innerHTML = '&nbsp;';
+      ballNum.textContent = '?';
+      drawLabel.textContent = 'Ready when you are';
+      document.title = 'Wedding Hamper Lucky Draw';
+    } else {
+      ball.classList.remove('idle');
+      ballLetter.textContent = letterFor(state.current);
+      ballNum.textContent = state.current;
+      document.title = letterFor(state.current) + ' ' + state.current + ' · Hamper Lucky Draw';
+    }
+    var pool = remaining();
+    drawBtn.disabled = pool.length === 0;
+    drawBtn.textContent = pool.length === 0 ? 'All called!' : 'Draw Number';
+    save();
+  }
+
+  function goldConfetti(big) {
+    if (typeof confetti !== 'function') return;
+    confetti({
+      particleCount: big ? 160 : 70,
+      spread: big ? 90 : 60,
+      origin: { y: 0.55 },
+      colors: ['#f7e2a0', '#e8c25a', '#d9a93b', '#fff7dd', '#b8860b'],
+      disableForReducedMotion: true
+    });
+  }
+
+  function markCalled(n, isOffline) {
+    state.called.push(n);
+    if (isOffline) state.offline[n] = true;
+    state.current = n;
+    render();
+  }
+
+  // ---- draw with slot-machine animation ----
+  var drawing = false;
+  function draw() {
+    if (drawing) return;
+    var pool = remaining();
+    if (!pool.length) return;
+    var finalNum = pool[Math.floor(Math.random() * pool.length)];
+    drawing = true;
+    drawBtn.disabled = true;
+    ball.classList.remove('idle', 'land');
+    ball.classList.add('rolling');
+    drawLabel.textContent = 'Drawing…';
+    var start = Date.now();
+    var dur = 1300;
+    (function tick() {
+      var p = Math.min((Date.now() - start) / dur, 1);
+      var tmp = pool[Math.floor(Math.random() * pool.length)];
+      ballLetter.textContent = letterFor(tmp);
+      ballNum.textContent = tmp;
+      if (p < 1) {
+        setTimeout(tick, 45 + p * 160);
+      } else {
+        ball.classList.remove('rolling');
+        ball.classList.add('land');
+        markCalled(finalNum, false);
+        drawLabel.textContent = 'Number ' + state.called.length + ' of ' + TOTAL;
+        goldConfetti(true);
+        drawing = false;
+        render();
+      }
+    })();
+  }
+
+  // ---- override ----
+  function showFlash(msg, ok) {
+    flash.textContent = msg;
+    flash.className = 'flash ' + (ok ? 'ok' : 'err');
+    setTimeout(function () { flash.textContent = ''; flash.className = 'flash'; }, 3500);
+  }
+  function doOverride() {
+    var raw = overrideInput.value.trim();
+    var n = parseInt(raw, 10);
+    if (!/^\d+$/.test(raw) || n < 1 || n > 75) {
+      showFlash('Enter a whole number between 1 and 75.', false);
+      return;
+    }
+    if (state.called.indexOf(n) !== -1) {
+      showFlash(letterFor(n) + ' ' + n + ' was already called.', false);
+      return;
+    }
+    markCalled(n, true);
+    drawLabel.textContent = 'Marked from offline draw';
+    showFlash(letterFor(n) + ' ' + n + ' marked as called.', true);
+    overrideInput.value = '';
+    overrideInput.focus();
+  }
+
+  drawBtn.addEventListener('click', draw);
+  overrideBtn.addEventListener('click', doOverride);
+  overrideInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') doOverride();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' && document.activeElement !== overrideInput && !drawing) {
+      e.preventDefault();
+      draw();
+    }
+  });
+  resetBtn.addEventListener('click', function () {
+    if (state.called.length && confirm('Start a new game? This clears all called numbers.')) {
+      state = { called: [], current: null, offline: {} };
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
