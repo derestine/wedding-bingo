@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 <style>
   :root {
-    --ivory: #f8f4ea;
+    --ivory: #faf7ef;
     --ivory-2: #f1ebdc;
     --ink: #4a4137;
     --ink-soft: #8a7d6b;
@@ -26,7 +26,7 @@
   body {
     font-family: 'Jost', system-ui, sans-serif;
     background:
-      radial-gradient(1000px 480px at 12% 0%, rgba(217, 184, 166, 0.20), transparent 60%),
+      radial-gradient(1000px 480px at 12% 0%, rgba(217, 184, 166, 0.26), transparent 60%),
       radial-gradient(1000px 520px at 88% 8%, rgba(138, 155, 126, 0.16), transparent 60%),
       radial-gradient(1400px 700px at 50% 110%, rgba(217, 189, 127, 0.18), transparent 60%),
       var(--ivory);
@@ -43,7 +43,7 @@
   }
   body::after {
     content: ""; position: fixed; inset: 0; z-index: -1;
-    background: linear-gradient(rgba(248, 244, 234, 0.84), rgba(243, 236, 222, 0.92));
+    background: linear-gradient(rgba(250, 247, 240, 0.88), rgba(246, 240, 228, 0.94));
   }
 
   /* ---------- header ---------- */
@@ -53,7 +53,7 @@
     font-size: clamp(52px, 9vw, 96px);
     line-height: 1.05; color: var(--ink);
   }
-  .names .amp { color: var(--gold); font-size: 0.72em; }
+  .names .amp { color: #c69a86; font-size: 0.72em; }
   .rule { display: flex; align-items: center; gap: 14px; margin: 14px auto 12px; max-width: 420px; }
   .rule::before, .rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
   .rule span { color: var(--gold); font-size: 13px; }
@@ -146,7 +146,7 @@
   .ball-wrap.glow::before {
     content: ""; position: absolute; top: 50%; left: 50%;
     width: 304px; height: 304px; margin: -152px 0 0 -152px; border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(217,189,127,0.9) 325deg, rgba(255,252,240,0.95) 345deg, transparent 360deg);
+    background: conic-gradient(from 0deg, transparent 0deg, transparent 290deg, rgba(233,186,118,0.9) 325deg, rgba(255,246,230,0.95) 345deg, transparent 360deg);
     -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
     mask: radial-gradient(farthest-side, transparent calc(100% - 7px), #000 calc(100% - 6px));
     animation: ringSpin 5s linear infinite;
@@ -155,7 +155,7 @@
   .ball-wrap.glow::after {
     content: ""; position: absolute; top: 50%; left: 50%;
     width: 284px; height: 284px; margin: -142px 0 0 -142px; border-radius: 50%;
-    box-shadow: 0 0 55px 20px rgba(217,189,127,0.55), 0 0 130px 45px rgba(217,189,127,0.28);
+    box-shadow: 0 0 55px 20px rgba(233,186,118,0.55), 0 0 130px 45px rgba(233,186,118,0.28);
     animation: glowPulse 2.2s ease-in-out infinite;
     pointer-events: none;
   }
