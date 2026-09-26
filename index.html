@@ -127,10 +127,6 @@
       0 0 0 12px rgba(138, 155, 126, 0.10);
     color: var(--ink); position: relative;
   }
-  .ball .letter {
-    font-size: 15px; font-weight: 600; letter-spacing: 0.5em; text-indent: 0.5em;
-    text-transform: uppercase; color: var(--gold-deep); margin-bottom: 2px;
-  }
   .ball .num {
     font-family: 'Cormorant Garamond', serif; font-weight: 700;
     font-size: 118px; line-height: 1;
@@ -282,7 +278,6 @@
     <div class="draw-label" id="drawLabel">Ready when you are</div>
     <div class="ball-wrap">
       <div class="ball idle" id="ball">
-        <div class="letter" id="ballLetter">&nbsp;</div>
         <div class="num" id="ballNum">?</div>
       </div>
     </div>
@@ -333,7 +328,6 @@
   } catch (e) { /* fresh start */ }
 
   var ball = document.getElementById('ball');
-  var ballLetter = document.getElementById('ballLetter');
   var ballNum = document.getElementById('ballNum');
   var drawBtn = document.getElementById('drawBtn');
   var drawLabel = document.getElementById('drawLabel');
@@ -413,13 +407,11 @@
     }
     if (state.current == null) {
       ball.classList.add('idle');
-      ballLetter.innerHTML = '&nbsp;';
       ballNum.textContent = '?';
       drawLabel.textContent = 'Ready when you are';
       document.title = 'Derrick & Jolene · Hamper Lucky Draw';
     } else {
       ball.classList.remove('idle');
-      ballLetter.textContent = letterFor(state.current);
       ballNum.textContent = state.current;
       document.title = letterFor(state.current) + ' ' + state.current + ' · Derrick & Jolene';
     }
@@ -489,7 +481,6 @@
     (function tickFrame() {
       var p = Math.min((Date.now() - start) / dur, 1);
       var tmp = pool[Math.floor(Math.random() * pool.length)];
-      ballLetter.textContent = letterFor(tmp);
       ballNum.textContent = tmp;
       if (p > 0.55) ballNum.classList.remove('fast'); /* motion blur settles */
       var now = Date.now();
